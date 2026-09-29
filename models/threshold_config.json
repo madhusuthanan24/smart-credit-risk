@@ -1,0 +1,9 @@
+{
+  "selected_model": "Tuned Logistic Regression",
+  "optimal_threshold": 0.35,
+  "baseline_threshold": 0.5,
+  "recall_at_optimal": 0.7667,
+  "precision_at_optimal": 0.5974,
+  "f1_at_optimal": 0.6715,
+  "cost_index_optimal": 101
+}

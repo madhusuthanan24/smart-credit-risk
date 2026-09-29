@@ -1,0 +1,18 @@
+{
+  "model_type": "LogisticRegression",
+  "hyperparameters": {
+    "C": 0.1,
+    "max_iter": 1000,
+    "random_state": 42
+  },
+  "decision_threshold": 0.35,
+  "test_roc_auc": 0.8095,
+  "test_pr_auc": 0.6584,
+  "test_recall_at_optimal_threshold": 0.7667,
+  "test_f1_at_optimal_threshold": 0.6715,
+  "risk_categories": {
+    "Low Risk": "Prob < 0.20",
+    "Medium Risk": "0.20 <= Prob < 0.35",
+    "High Risk": "Prob >= 0.35"
+  }
+}
