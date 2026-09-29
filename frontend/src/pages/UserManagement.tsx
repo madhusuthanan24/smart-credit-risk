@@ -55,20 +55,20 @@ export const UserManagement: React.FC = () => {
     }
   };
 
-  const handleRoleChange = async (userId: string, role: string) => {
+  const handleRoleChange = async (userId: string | number, role: string) => {
     if (!token) return;
     try {
-      await updateUserApi(token, userId, { role });
+      await updateUserApi(token, String(userId), { role });
       await loadUsers();
     } catch (err: any) {
       alert(err.message || 'Failed to change user role.');
     }
   };
 
-  const handleToggleActive = async (userId: string, currentStatus: boolean) => {
+  const handleToggleActive = async (userId: string | number, currentStatus: boolean) => {
     if (!token) return;
     try {
-      await updateUserApi(token, userId, { is_active: !currentStatus });
+      await updateUserApi(token, String(userId), { is_active: !currentStatus });
       await loadUsers();
     } catch (err: any) {
       alert(err.message || 'Failed to update user active status.');

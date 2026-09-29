@@ -58,7 +58,23 @@ class TestBackendAPI(unittest.TestCase):
                 "foreign_worker": "A201"
             }
         }
-        cls.init_response = client.post("/api/predictions", json=payload, headers=cls.headers)
+        from unittest.mock import patch
+        from backend.services.nvidia_ai_service import nvidia_ai_service
+
+        with patch.object(
+            nvidia_ai_service,
+            "_call_nvidia_api",
+            return_value={
+                "explanation": "Test explanation rationale.",
+                "summary": "Test underwriting summary.",
+                "insights": ["Test insight 1", "Test insight 2"],
+                "provider": "NVIDIA AI",
+                "model": "meta/llama-3.2-11b-vision-instruct",
+                "status": "SUCCESS",
+                "generated_at": "2026-09-29T12:00:00"
+            }
+        ):
+            cls.init_response = client.post("/api/predictions", json=payload, headers=cls.headers)
 
     def test_health_endpoint(self):
         response = client.get("/api/health")
@@ -67,7 +83,11 @@ class TestBackendAPI(unittest.TestCase):
         self.assertEqual(data["status"], "healthy")
         self.assertIn("status", data)
         self.assertIn("database", data)
+        self.assertTrue(data["api"])
         self.assertTrue(data["model_loaded"])
+        self.assertTrue(data["preprocessing_loaded"])
+        self.assertTrue(data["threshold_loaded"])
+        self.assertTrue(data["authentication"])
 
     def test_model_info_endpoint(self):
         response = client.get("/api/model/info", headers=self.headers)
@@ -91,7 +111,16 @@ class TestBackendAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertIn("total_assessments", data)
+        self.assertIn("manual_review_count", data)
         self.assertGreaterEqual(data["total_assessments"], 1)
+
+    def test_dashboard_summary_with_days(self):
+        for d in [7, 30, 90]:
+            response = client.get(f"/api/dashboard/summary?days={d}", headers=self.headers)
+            self.assertEqual(response.status_code, 200)
+            data = response.json()
+            self.assertIn("total_assessments", data)
+            self.assertIn("manual_review_count", data)
 
     def test_analytics_overview(self):
         response = client.get("/api/analytics/overview", headers=self.headers)
@@ -99,6 +128,16 @@ class TestBackendAPI(unittest.TestCase):
         data = response.json()
         self.assertIn("risk_distribution", data)
         self.assertIn("probability_histogram", data)
+        self.assertIn("default_probability_trend", data)
+        self.assertIn("credit_history_vs_risk", data)
+
+    def test_analytics_overview_with_days(self):
+        response = client.get("/api/analytics/overview?days=30", headers=self.headers)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("risk_distribution", data)
+        self.assertIn("default_probability_trend", data)
+        self.assertIn("credit_history_vs_risk", data)
 
     def test_audit_logs(self):
         response = client.get("/api/audit/logs", headers=self.headers)

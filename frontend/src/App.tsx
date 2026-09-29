@@ -11,6 +11,10 @@ import { ModelInfo } from './pages/ModelInfo';
 import { SystemAudit } from './pages/SystemAudit';
 import { UserManagement } from './pages/UserManagement';
 import { Settings } from './pages/Settings';
+import { Simulator } from './pages/Simulator';
+import { Monitoring } from './pages/Monitoring';
+import { Governance } from './pages/Governance';
+import { AdminControlCenter } from './pages/AdminControlCenter';
 import { ShieldAlert } from 'lucide-react';
 
 const MainLayout: React.FC = () => {
@@ -45,7 +49,8 @@ const MainLayout: React.FC = () => {
   const canAccessTab = (tab: string): boolean => {
     const currentRole = role || 'VIEWER';
     if (tab === 'new-assessment') return ['ADMIN', 'CREDIT_OFFICER'].includes(currentRole);
-    if (tab === 'analytics') return ['ADMIN', 'CREDIT_OFFICER'].includes(currentRole);
+    if (tab === 'analytics') return ['ADMIN', 'CREDIT_OFFICER', 'VIEWER'].includes(currentRole);
+    if (tab === 'admin-center') return currentRole === 'ADMIN';
     if (tab === 'audit') return currentRole === 'ADMIN';
     if (tab === 'users') return currentRole === 'ADMIN';
     return true;
@@ -77,9 +82,13 @@ const MainLayout: React.FC = () => {
             <>
               {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
               {activeTab === 'new-assessment' && <NewAssessment />}
+              {activeTab === 'simulator' && <Simulator />}
               {activeTab === 'history' && <AssessmentHistory />}
-              {activeTab === 'analytics' && <Analytics />}
+              {activeTab === 'analytics' && <Analytics setActiveTab={setActiveTab} />}
+              {activeTab === 'monitoring' && <Monitoring />}
+              {activeTab === 'governance' && <Governance />}
               {activeTab === 'model-info' && <ModelInfo />}
+              {activeTab === 'admin-center' && <AdminControlCenter />}
               {activeTab === 'audit' && <SystemAudit />}
               {activeTab === 'users' && <UserManagement />}
               {activeTab === 'settings' && <Settings />}

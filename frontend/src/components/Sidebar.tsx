@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, PlusCircle, History, BarChart3, Cpu, ShieldCheck, Settings as SettingsIcon, CreditCard, Users } from 'lucide-react';
+import { LayoutDashboard, PlusCircle, History, BarChart3, Cpu, ShieldCheck, Shield, Settings as SettingsIcon, CreditCard, Users, SlidersHorizontal, Activity, Scale } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 interface SidebarProps {
@@ -13,9 +13,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
   const allMenuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['ADMIN', 'CREDIT_OFFICER', 'VIEWER'] },
     { id: 'new-assessment', label: 'New Assessment', icon: PlusCircle, roles: ['ADMIN', 'CREDIT_OFFICER'] },
+    { id: 'simulator', label: 'Risk Simulator', icon: SlidersHorizontal, roles: ['ADMIN', 'CREDIT_OFFICER', 'VIEWER'] },
     { id: 'history', label: 'Assessment History', icon: History, roles: ['ADMIN', 'CREDIT_OFFICER', 'VIEWER'] },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3, roles: ['ADMIN', 'CREDIT_OFFICER'] },
+    { id: 'analytics', label: 'Executive Analytics', icon: BarChart3, roles: ['ADMIN', 'CREDIT_OFFICER', 'VIEWER'] },
+    { id: 'monitoring', label: 'Model Monitoring', icon: Activity, roles: ['ADMIN', 'CREDIT_OFFICER', 'VIEWER'] },
+    { id: 'governance', label: 'Fairness & Governance', icon: Scale, roles: ['ADMIN', 'CREDIT_OFFICER', 'VIEWER'] },
     { id: 'model-info', label: 'Model Information', icon: Cpu, roles: ['ADMIN', 'CREDIT_OFFICER', 'VIEWER'] },
+    { id: 'admin-center', label: 'Admin Control Center', icon: Shield, roles: ['ADMIN'] },
     { id: 'audit', label: 'System Audit', icon: ShieldCheck, roles: ['ADMIN'] },
     { id: 'users', label: 'User Management', icon: Users, roles: ['ADMIN'] },
     { id: 'settings', label: 'Settings', icon: SettingsIcon, roles: ['ADMIN', 'CREDIT_OFFICER', 'VIEWER'] },

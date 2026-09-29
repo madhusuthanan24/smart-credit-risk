@@ -26,6 +26,11 @@ psycopg[binary]>=3.1.0
 pyjwt>=2.8.0
 passlib[bcrypt]>=1.7.4
 
+# PDF & Report Generation
+reportlab>=4.0.0
+
 # Notebook & Development
 jupyter>=1.0.0
 ipykernel>=6.25.0
+
+

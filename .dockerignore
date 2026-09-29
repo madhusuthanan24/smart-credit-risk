@@ -1,18 +1,22 @@
-# Environment files
-.env
-.env.local
-.env.*.local
+# Git & VCS
+.git/
+.gitignore
 
-# Python
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Python virtual environment & cache
+credit-risk/
+venv/
+env/
+ENV/
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-env/
-venv/
-credit-risk/
-ENV/
 build/
 develop-eggs/
 dist/
@@ -28,28 +32,27 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+.pytest_cache/
+.coverage
+htmlcov/
 
-# Database
+# Local database files
 *.db
 *.sqlite3
 smart_credit.db
-backups/
-*.dump
 
-# Logs & Test reports
+# Logs
 *.log
 logs/
-.coverage
-htmlcov/
-.pytest_cache/
 
 # Node / React
 node_modules/
 frontend/node_modules/
 frontend/dist/
 
-# Antigravity & IDE
+# IDE & system artifacts
 .vscode/
 .idea/
 .gemini/
-
+.DS_Store
+Thumbs.db

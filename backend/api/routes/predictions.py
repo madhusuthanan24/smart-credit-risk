@@ -1,3 +1,4 @@
+import json
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
@@ -6,6 +7,7 @@ from backend.database.database import get_db
 from backend.database.models import Applicant, Assessment, AuditLog, User
 from backend.schemas.schemas import PredictionRequest, PredictionResponse, AssessmentSummaryItem
 from backend.services.prediction_service import prediction_service
+from backend.services.nvidia_ai_service import nvidia_ai_service
 from backend.api.dependencies import get_current_user, require_role, limit_prediction_attempts
 
 router = APIRouter()
@@ -27,7 +29,10 @@ def create_prediction(
             detail=f"Prediction calculation failed: {str(e)}"
         )
     
-    # 2. Transactional Database Persistence
+    # 2. NVIDIA AI Explainability Layer (Downstream)
+    ai_result = nvidia_ai_service.generate_explanation(app_data, result)
+
+    # 3. Transactional Database Persistence
     try:
         applicant = Applicant(**app_data)
         db.add(applicant)
@@ -41,7 +46,13 @@ def create_prediction(
             decision=result['credit_decision'],
             threshold=result['decision_threshold'],
             model_name=result['model_name'],
-            model_version=result['model_version']
+            model_version=result['model_version'],
+            ai_explanation=ai_result.get("explanation"),
+            ai_summary=ai_result.get("summary"),
+            ai_insights=json.dumps(ai_result.get("insights", [])),
+            ai_provider=ai_result.get("provider"),
+            ai_model=ai_result.get("model"),
+            ai_generated_at=datetime.utcnow()
         )
         db.add(assessment)
         db.flush()
@@ -52,7 +63,7 @@ def create_prediction(
             model_version=result['model_version'],
             threshold=result['decision_threshold'],
             status="SUCCESS",
-            details=f"User {current_user.email} ({current_user.role}) created assessment. Probability: {result['default_probability_pct']}, Decision: {result['credit_decision']}"
+            details=f"User {current_user.email} ({current_user.role}) created assessment. Probability: {result['default_probability_pct']}, Decision: {result['credit_decision']}, AI: {ai_result.get('provider')}"
         )
         db.add(audit)
         db.commit()
@@ -81,7 +92,13 @@ def create_prediction(
         "created_at": assessment.created_at.strftime('%Y-%m-%d %H:%M:%S') if assessment.created_at else datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'),
         "risk_factors": result.get('risk_factors', []),
         "protective_factors": result.get('protective_factors', []),
-        "disclaimer": result.get('disclaimer', '')
+        "disclaimer": result.get('disclaimer', ''),
+        "ai_explanation": ai_result.get("explanation"),
+        "ai_summary": ai_result.get("summary"),
+        "ai_insights": ai_result.get("insights", []),
+        "ai_provider": ai_result.get("provider"),
+        "ai_model": ai_result.get("model"),
+        "ai_generated_at": assessment.created_at.strftime('%Y-%m-%d %H:%M:%S') if assessment.created_at else datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
     }
 
 @router.get("/predictions", response_model=List[AssessmentSummaryItem], summary="List historical credit assessments")
@@ -135,7 +152,9 @@ def list_predictions(
             "risk_category": a.risk_category,
             "credit_decision": a.decision,
             "decision": a.decision,
-            "model_version": a.model_version
+            "model_version": a.model_version,
+            "ai_summary": a.ai_summary,
+            "ai_provider": a.ai_provider
         })
     return results
 
@@ -167,6 +186,28 @@ def get_prediction_detail(
         protective_factors = []
         disclaimer = ""
 
+    ai_insights = []
+    if assessment.ai_insights:
+        try:
+            ai_insights = json.loads(assessment.ai_insights)
+        except Exception:
+            ai_insights = [assessment.ai_insights]
+
+    ai_explanation = assessment.ai_explanation
+    ai_summary = assessment.ai_summary
+    ai_provider = assessment.ai_provider
+    ai_model = assessment.ai_model
+    ai_generated_at = assessment.ai_generated_at.strftime('%Y-%m-%d %H:%M:%S') if assessment.ai_generated_at else None
+
+    # Fallback if historical record didn't have AI generated at creation time
+    if not ai_explanation:
+        ai_fallback = nvidia_ai_service.generate_explanation(app_dict, result)
+        ai_explanation = ai_fallback.get("explanation")
+        ai_summary = ai_fallback.get("summary")
+        ai_insights = ai_fallback.get("insights", [])
+        ai_provider = ai_fallback.get("provider")
+        ai_model = ai_fallback.get("model")
+
     return {
         "success": True,
         "prediction_id": assessment.id,
@@ -186,5 +227,11 @@ def get_prediction_detail(
         "applicant_features": app_dict,
         "risk_factors": risk_factors,
         "protective_factors": protective_factors,
-        "disclaimer": disclaimer
+        "disclaimer": disclaimer,
+        "ai_explanation": ai_explanation,
+        "ai_summary": ai_summary,
+        "ai_insights": ai_insights,
+        "ai_provider": ai_provider,
+        "ai_model": ai_model,
+        "ai_generated_at": ai_generated_at
     }

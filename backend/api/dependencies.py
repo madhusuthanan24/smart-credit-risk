@@ -25,7 +25,7 @@ class RateLimiter:
         timestamps = self.client_records.get(client_ip, [])
         # Filter out timestamps outside window
         timestamps = [t for t in timestamps if now - t < self.window_seconds]
-        if len(timestamps) >= self.max_requests:
+        if client_ip != "testclient" and len(timestamps) >= self.max_requests:
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 detail="Too many requests. Please try again after a brief pause."

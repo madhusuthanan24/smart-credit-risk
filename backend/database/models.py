@@ -17,6 +17,10 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
 
+    __table_args__ = (
+        Index("ix_users_role_created", "role", "created_at"),
+    )
+
 class Applicant(Base):
     __tablename__ = "applicants"
 
@@ -62,13 +66,27 @@ class Assessment(Base):
     model_name = Column(String(100), nullable=False)
     model_version = Column(String(50), default="1.0.0")
 
+    # NVIDIA AI Explainability Fields
+    ai_explanation = Column(Text, nullable=True)
+    ai_summary = Column(Text, nullable=True)
+    ai_insights = Column(Text, nullable=True)  # JSON-encoded list of insights
+    ai_provider = Column(String(100), nullable=True)
+    ai_model = Column(String(100), nullable=True)
+    ai_generated_at = Column(DateTime, nullable=True)
+
     # Synonyms for backward compatibility with schema fields
+
     predicted_class = synonym("prediction")
     credit_decision = synonym("decision")
     decision_threshold = synonym("threshold")
 
     applicant = relationship("Applicant", back_populates="assessments")
     audit_logs = relationship("AuditLog", back_populates="assessment", cascade="all, delete-orphan")
+
+    __table_args__ = (
+        Index("ix_assessments_created_risk", "created_at", "risk_category"),
+        Index("ix_assessments_applicant_created", "applicant_id", "created_at"),
+    )
 
 class AuditLog(Base):
     __tablename__ = "audit_logs"
@@ -83,3 +101,7 @@ class AuditLog(Base):
     details = Column(Text, nullable=True)
 
     assessment = relationship("Assessment", back_populates="audit_logs")
+
+    __table_args__ = (
+        Index("ix_audit_logs_action_timestamp", "action", "timestamp"),
+    )

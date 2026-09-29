@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { fetchPredictions, fetchPredictionDetail } from '../services/api';
+import { fetchPredictions, fetchPredictionDetail, downloadAssessmentReport } from '../services/api';
 import { AssessmentItem, PredictionResponse } from '../types';
-import { Search, Filter, Eye, X } from 'lucide-react';
+import { Search, Filter, Eye, X, Cpu, Sparkles, Lightbulb, ShieldCheck, FileDown } from 'lucide-react';
 
 export const AssessmentHistory: React.FC = () => {
   const [history, setHistory] = useState<AssessmentItem[]>([]);
@@ -9,6 +9,19 @@ export const AssessmentHistory: React.FC = () => {
   const [search, setSearch] = useState('');
   const [riskFilter, setRiskFilter] = useState('ALL');
   const [selectedDetail, setSelectedDetail] = useState<(PredictionResponse & { applicant_features: any }) | null>(null);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+
+  const handleDownload = async (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setDownloadingId(id);
+    try {
+      await downloadAssessmentReport(id);
+    } catch (err: any) {
+      alert(err.message || 'Failed to download report');
+    } finally {
+      setDownloadingId(null);
+    }
+  };
 
   useEffect(() => {
     fetchPredictions()
@@ -119,15 +132,34 @@ export const AssessmentHistory: React.FC = () => {
                         {item.risk_category}
                       </span>
                     </td>
-                    <td className="py-4 px-6 font-semibold text-xs text-slate-700 dark:text-slate-300">{item.credit_decision}</td>
+                    <td className="py-4 px-6 font-semibold text-xs text-slate-700 dark:text-slate-300">
+                      <div className="flex items-center gap-1.5">
+                        <span>{item.credit_decision}</span>
+                        {item.ai_summary && (
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-brand-50 text-brand-600 dark:bg-brand-900/40 dark:text-brand-300 border border-brand-200 dark:border-brand-800" title="NVIDIA AI Insights Available">
+                            AI
+                          </span>
+                        )}
+                      </div>
+                    </td>
                     <td className="py-4 px-6 text-right">
-                      <button
-                        onClick={() => handleViewDetail(item.id)}
-                        className="p-2 text-slate-400 hover:text-brand-500 hover:bg-brand-50 dark:hover:bg-slate-700 rounded-lg transition-all"
-                        title="View Full Detail"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center justify-end gap-1">
+                        <button
+                          onClick={(e) => handleDownload(item.id, e)}
+                          disabled={downloadingId === item.id}
+                          className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-slate-700 rounded-lg transition-all"
+                          title="Download PDF Report"
+                        >
+                          <FileDown className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleViewDetail(item.id)}
+                          className="p-2 text-slate-400 hover:text-brand-500 hover:bg-brand-50 dark:hover:bg-slate-700 rounded-lg transition-all"
+                          title="View Full Detail"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -173,6 +205,46 @@ export const AssessmentHistory: React.FC = () => {
               </div>
             </div>
 
+            {/* NVIDIA AI Explainability in Detail Modal */}
+            {(selectedDetail.ai_summary || selectedDetail.ai_explanation) && (
+              <div className="border-t border-slate-100 dark:border-slate-700 pt-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Cpu className="w-4 h-4 text-brand-500" />
+                    <h4 className="font-bold text-slate-900 dark:text-white text-sm">NVIDIA AI Underwriting Brief</h4>
+                  </div>
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300">
+                    {selectedDetail.ai_model || 'meta/llama-3.1-70b-instruct'}
+                  </span>
+                </div>
+
+                {selectedDetail.ai_summary && (
+                  <div className="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200/60 dark:border-slate-700/60 text-xs text-slate-700 dark:text-slate-300">
+                    <span className="font-bold block text-slate-900 dark:text-white mb-1">Executive Summary</span>
+                    <p className="leading-relaxed">{selectedDetail.ai_summary}</p>
+                  </div>
+                )}
+
+                {selectedDetail.ai_explanation && (
+                  <div className="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200/60 dark:border-slate-700/60 text-xs text-slate-700 dark:text-slate-300">
+                    <span className="font-bold block text-slate-900 dark:text-white mb-1">Decision Rationale</span>
+                    <p className="leading-relaxed">{selectedDetail.ai_explanation}</p>
+                  </div>
+                )}
+
+                {selectedDetail.ai_insights && selectedDetail.ai_insights.length > 0 && (
+                  <div className="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200/60 dark:border-slate-700/60 text-xs">
+                    <span className="font-bold block text-slate-900 dark:text-white mb-1.5">Actionable Risk Insights</span>
+                    <ul className="space-y-1 text-slate-600 dark:text-slate-300 list-disc list-inside">
+                      {selectedDetail.ai_insights.map((ins, idx) => (
+                        <li key={idx} className="leading-relaxed">{ins}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="border-t border-slate-100 dark:border-slate-700 pt-4">
               <h4 className="font-bold text-slate-900 dark:text-white text-sm mb-2">Submitted Features</h4>
               <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-xl text-xs font-mono max-h-48 overflow-y-auto">
@@ -180,7 +252,15 @@ export const AssessmentHistory: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex justify-between items-center pt-2">
+              <button
+                onClick={() => handleDownload(selectedDetail.prediction_id)}
+                disabled={downloadingId === selectedDetail.prediction_id}
+                className="flex items-center gap-2 px-4 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 dark:hover:bg-indigo-900/50 border border-indigo-200 dark:border-indigo-800 text-xs font-semibold rounded-xl transition shadow-xs disabled:opacity-50"
+              >
+                <FileDown className="w-4 h-4" />
+                <span>{downloadingId === selectedDetail.prediction_id ? 'Generating...' : 'Download Assessment Report'}</span>
+              </button>
               <button onClick={() => setSelectedDetail(null)} className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-sm rounded-xl">
                 Close
               </button>
