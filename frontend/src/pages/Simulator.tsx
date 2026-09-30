@@ -280,31 +280,31 @@ export const Simulator: React.FC = () => {
   ] : [];
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-12">
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto pb-12 min-w-0">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5 sm:pb-6">
         <div>
           <div className="flex items-center gap-3 mb-1">
-            <div className="p-2.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-xl">
-              <SlidersHorizontal className="w-6 h-6" />
+            <div className="p-2 sm:p-2.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-xl flex-shrink-0">
+              <SlidersHorizontal className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
                 Credit Risk Simulator
               </h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
                 Explore how changes to an applicant profile affect the model's predicted credit risk.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-medium border border-slate-200 dark:border-slate-700">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-medium border border-slate-200 dark:border-slate-700">
             <Cpu className="w-3.5 h-3.5 text-brand-500" />
             <span>Threshold: <strong>0.35 (35.0%)</strong></span>
           </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 rounded-lg text-xs font-medium border border-emerald-200 dark:border-emerald-800/40">
+          <div className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 rounded-lg text-xs font-medium border border-emerald-200 dark:border-emerald-800/40">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <span>Production ML Pipeline</span>
           </div>
@@ -312,14 +312,14 @@ export const Simulator: React.FC = () => {
       </div>
 
       {error && (
-        <div className="p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/50 rounded-xl flex items-center gap-3 text-rose-700 dark:text-rose-300 text-sm">
+        <div className="p-3.5 sm:p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/50 rounded-xl flex items-center gap-3 text-rose-700 dark:text-rose-300 text-xs sm:text-sm">
           <AlertTriangle className="w-5 h-5 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Preset Profiles Bar */}
-      <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+      <div className="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
         <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
           Select Baseline Applicant Scenario
         </label>
@@ -331,7 +331,7 @@ export const Simulator: React.FC = () => {
                 key={key}
                 type="button"
                 onClick={() => handlePresetChange(key)}
-                className={`p-3.5 rounded-xl border text-left transition-all ${
+                className={`p-3 sm:p-3.5 rounded-xl border text-left transition-all ${
                   isSelected
                     ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-950/30 text-slate-900 dark:text-white shadow-xs'
                     : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 bg-slate-50/50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300'
@@ -351,13 +351,13 @@ export const Simulator: React.FC = () => {
       </div>
 
       {/* Two Column Layout: Parameters & Adjustments */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 min-w-0">
         {/* Left Column: Simulation Inputs */}
-        <div className="lg:col-span-6 space-y-6">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-4">
+        <div className="lg:col-span-6 space-y-6 min-w-0">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 shadow-sm space-y-5 sm:space-y-6 min-w-0">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700 pb-4">
               <div>
-                <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                   Simulate Parameter Changes
                 </h2>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -605,7 +605,7 @@ export const Simulator: React.FC = () => {
               </div>
 
               {/* Housing & Property */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                     Housing
@@ -654,7 +654,7 @@ export const Simulator: React.FC = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex gap-3">
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row gap-3">
               <button
                 type="button"
                 onClick={handleRunSimulation}
@@ -686,13 +686,13 @@ export const Simulator: React.FC = () => {
         </div>
 
         {/* Right Column: Comparison & Results */}
-        <div className="lg:col-span-6 space-y-6">
+        <div className="lg:col-span-6 space-y-6 min-w-0">
           {simulationResult ? (
             <>
               {/* Primary Comparison Cards */}
-              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm space-y-6">
-                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-4">
-                  <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 shadow-sm space-y-5 sm:space-y-6 min-w-0">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700 pb-4">
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                     Prediction Variance
                   </h2>
                   <span className="text-xs text-slate-400 font-mono">
@@ -701,13 +701,13 @@ export const Simulator: React.FC = () => {
                 </div>
 
                 {/* Side-by-Side Probabilities */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   {/* Original Card */}
-                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 space-y-2">
+                  <div className="p-3.5 sm:p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 space-y-2">
                     <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
                       Original Baseline
                     </span>
-                    <div className="text-3xl font-extrabold text-slate-800 dark:text-slate-100">
+                    <div className="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-slate-100">
                       {simulationResult.original.default_probability_pct}
                     </div>
                     <div>
@@ -727,11 +727,11 @@ export const Simulator: React.FC = () => {
                   </div>
 
                   {/* Simulated Card */}
-                  <div className="p-4 rounded-xl bg-indigo-50/50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/50 space-y-2">
+                  <div className="p-3.5 sm:p-4 rounded-xl bg-indigo-50/50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/50 space-y-2">
                     <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">
                       Simulated Profile
                     </span>
-                    <div className={`text-3xl font-extrabold ${
+                    <div className={`text-2xl sm:text-3xl font-extrabold ${
                       simulationResult.simulated.default_probability >= 0.35
                         ? 'text-rose-600 dark:text-rose-400'
                         : 'text-emerald-600 dark:text-emerald-400'
@@ -756,7 +756,7 @@ export const Simulator: React.FC = () => {
                 </div>
 
                 {/* Probability & Risk Transition Banner */}
-                <div className={`p-4 rounded-xl border flex items-center justify-between ${
+                <div className={`p-3.5 sm:p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                   simulationResult.difference.direction === 'lower'
                     ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/50 text-emerald-900 dark:text-emerald-200'
                     : simulationResult.difference.direction === 'higher'
@@ -765,34 +765,34 @@ export const Simulator: React.FC = () => {
                 }`}>
                   <div className="flex items-center gap-3">
                     {simulationResult.difference.direction === 'lower' ? (
-                      <div className="p-2 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 rounded-lg">
+                      <div className="p-2 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 rounded-lg flex-shrink-0">
                         <TrendingDown className="w-5 h-5" />
                       </div>
                     ) : simulationResult.difference.direction === 'higher' ? (
-                      <div className="p-2 bg-rose-100 dark:bg-rose-900/50 text-rose-600 rounded-lg">
+                      <div className="p-2 bg-rose-100 dark:bg-rose-900/50 text-rose-600 rounded-lg flex-shrink-0">
                         <TrendingUp className="w-5 h-5" />
                       </div>
                     ) : (
-                      <div className="p-2 bg-slate-200 dark:bg-slate-700 text-slate-500 rounded-lg">
+                      <div className="p-2 bg-slate-200 dark:bg-slate-700 text-slate-500 rounded-lg flex-shrink-0">
                         <ArrowRight className="w-5 h-5" />
                       </div>
                     )}
                     <div>
-                      <div className="text-xs font-semibold uppercase tracking-wider opacity-80">
+                      <div className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider opacity-80">
                         Probability Difference
                       </div>
-                      <div className="text-base font-bold">
+                      <div className="text-sm sm:text-base font-bold">
                         {simulationResult.difference.probability_points > 0 ? '+' : ''}
                         {simulationResult.difference.probability_points.toFixed(2)} percentage points
                       </div>
                     </div>
                   </div>
 
-                  <div className="text-right">
-                    <div className="text-xs font-semibold uppercase tracking-wider opacity-80">
+                  <div className="sm:text-right">
+                    <div className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider opacity-80">
                       Risk Transition
                     </div>
-                    <div className="text-sm font-bold flex items-center gap-1.5 justify-end">
+                    <div className="text-sm font-bold flex items-center gap-1.5 justify-start sm:justify-end">
                       <span>{simulationResult.original_risk}</span>
                       <ArrowRight className="w-3.5 h-3.5 opacity-60" />
                       <span>{simulationResult.simulated_risk}</span>
@@ -810,7 +810,7 @@ export const Simulator: React.FC = () => {
                       Cutoff = 35%
                     </span>
                   </div>
-                  <div className="h-44 w-full">
+                  <div className="h-40 sm:h-44 w-full min-w-0">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart
                         data={chartData}
@@ -889,10 +889,10 @@ export const Simulator: React.FC = () => {
               </div>
 
               {/* NVIDIA AI Insight Card */}
-              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 shadow-sm space-y-4 min-w-0">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700 pb-3">
                   <div className="flex items-center gap-2">
-                    <div className="p-1.5 bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 rounded-lg">
+                    <div className="p-1.5 bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 rounded-lg flex-shrink-0">
                       <Sparkles className="w-4 h-4" />
                     </div>
                     <div>
@@ -904,7 +904,7 @@ export const Simulator: React.FC = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 self-start sm:self-auto">
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800">
                       {simulationResult.ai_provider || 'NVIDIA AI'}
                     </span>

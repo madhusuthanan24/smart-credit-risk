@@ -223,31 +223,31 @@ export const AdminControlCenter: React.FC = () => {
   return (
     <div className="space-y-6 pb-12">
       {/* Header Banner */}
-      <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="p-3 bg-brand-500 text-white rounded-xl shadow-md">
-            <Shield className="w-7 h-7" />
+      <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4 min-w-0">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="p-2.5 sm:p-3 bg-brand-500 text-white rounded-xl shadow-md shrink-0">
+            <Shield className="w-6 h-6 sm:w-7 sm:h-7" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Admin Control & Audit Center</h1>
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white truncate">Admin Control & Audit Center</h1>
               <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                 Phase G Verified
               </span>
             </div>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
               Unified administrative governance, user access management, security auditing, and system diagnostics.
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 w-full md:w-auto">
           <button
             onClick={handleRefreshAll}
             disabled={refreshing}
-            className="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-sm font-semibold rounded-xl transition flex items-center gap-2"
+            className="w-full sm:w-auto justify-center px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold rounded-xl transition flex items-center gap-2"
           >
-            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 shrink-0 ${refreshing ? 'animate-spin' : ''}`} />
             <span>{refreshing ? 'Refreshing...' : 'Refresh Telemetry'}</span>
           </button>
         </div>
@@ -255,87 +255,88 @@ export const AdminControlCenter: React.FC = () => {
 
       {/* Global Alerts / Feedback */}
       {error && (
-        <div className="p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl text-rose-700 dark:text-rose-300 flex items-center gap-3 text-sm">
+        <div className="p-3 sm:p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl text-rose-700 dark:text-rose-300 flex items-center gap-3 text-xs sm:text-sm">
           <AlertCircle className="w-5 h-5 shrink-0" />
           <span>{error}</span>
         </div>
       )}
       {userActionError && (
-        <div className="p-4 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl text-amber-800 dark:text-amber-300 flex items-center gap-3 text-sm">
+        <div className="p-3 sm:p-4 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl text-amber-800 dark:text-amber-300 flex items-center gap-3 text-xs sm:text-sm">
           <AlertCircle className="w-5 h-5 shrink-0" />
           <span>{userActionError}</span>
         </div>
       )}
       {userActionSuccess && (
-        <div className="p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-800 dark:text-emerald-300 flex items-center gap-3 text-sm">
+        <div className="p-3 sm:p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-800 dark:text-emerald-300 flex items-center gap-3 text-xs sm:text-sm">
           <CheckCircle className="w-5 h-5 shrink-0" />
           <span>{userActionSuccess}</span>
         </div>
       )}
 
       {/* Sub-tab Navigation */}
-      <div className="flex border-b border-slate-200 dark:border-slate-700 space-x-6 text-sm font-medium">
+      <div className="flex overflow-x-auto whitespace-nowrap border-b border-slate-200 dark:border-slate-700 gap-2 sm:gap-6 text-xs sm:text-sm font-medium -mx-1 px-1">
         <button
           onClick={() => setActiveSubTab('overview')}
-          className={`pb-3 border-b-2 flex items-center gap-2 transition ${
+          className={`pb-2.5 sm:pb-3 border-b-2 flex items-center gap-1.5 sm:gap-2 shrink-0 transition ${
             activeSubTab === 'overview'
               ? 'border-brand-500 text-brand-600 dark:text-brand-400 font-semibold'
               : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
           }`}
         >
-          <Activity className="w-4 h-4" />
+          <Activity className="w-4 h-4 shrink-0" />
           <span>Overview & Health</span>
         </button>
         <button
           onClick={() => setActiveSubTab('users')}
-          className={`pb-3 border-b-2 flex items-center gap-2 transition ${
+          className={`pb-2.5 sm:pb-3 border-b-2 flex items-center gap-1.5 sm:gap-2 shrink-0 transition ${
             activeSubTab === 'users'
               ? 'border-brand-500 text-brand-600 dark:text-brand-400 font-semibold'
               : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
           }`}
         >
-          <UsersIcon className="w-4 h-4" />
+          <UsersIcon className="w-4 h-4 shrink-0" />
           <span>User Access Control</span>
         </button>
         <button
           onClick={() => setActiveSubTab('audit')}
-          className={`pb-3 border-b-2 flex items-center gap-2 transition ${
+          className={`pb-2.5 sm:pb-3 border-b-2 flex items-center gap-1.5 sm:gap-2 shrink-0 transition ${
             activeSubTab === 'audit'
               ? 'border-brand-500 text-brand-600 dark:text-brand-400 font-semibold'
               : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
           }`}
         >
-          <FileText className="w-4 h-4" />
+          <FileText className="w-4 h-4 shrink-0" />
           <span>Audit Log Center</span>
         </button>
         <button
           onClick={() => setActiveSubTab('security')}
-          className={`pb-3 border-b-2 flex items-center gap-2 transition ${
+          className={`pb-2.5 sm:pb-3 border-b-2 flex items-center gap-1.5 sm:gap-2 shrink-0 transition ${
             activeSubTab === 'security'
               ? 'border-brand-500 text-brand-600 dark:text-brand-400 font-semibold'
               : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
           }`}
         >
-          <Key className="w-4 h-4" />
+          <Key className="w-4 h-4 shrink-0" />
           <span>Security & Rate Limits</span>
         </button>
       </div>
 
       {/* ============================================================== */}
+      {/* ============================================================== */}
       {/* TAB 1: OVERVIEW & HEALTH                                       */}
       {/* ============================================================== */}
       {activeSubTab === 'overview' && (
-        <div className="space-y-6">
+        <div className="space-y-6 min-w-0">
           {/* Top KPI Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {/* Total Users */}
-            <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+            <div className="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs min-w-0">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Users</span>
-                <UsersIcon className="w-5 h-5 text-brand-500" />
+                <UsersIcon className="w-5 h-5 text-brand-500 shrink-0" />
               </div>
               <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{overview?.total_users ?? 0}</p>
-              <div className="flex items-center gap-2 mt-2 text-xs text-slate-500">
+              <div className="flex flex-wrap items-center gap-2 mt-2 text-xs text-slate-500">
                 <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{overview?.active_users ?? 0} active</span>
                 <span>•</span>
                 <span>{(overview?.total_users ?? 0) - (overview?.active_users ?? 0)} inactive</span>
@@ -343,13 +344,13 @@ export const AdminControlCenter: React.FC = () => {
             </div>
 
             {/* Total Assessments */}
-            <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+            <div className="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs min-w-0">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Assessments</span>
-                <Activity className="w-5 h-5 text-indigo-500" />
+                <Activity className="w-5 h-5 text-indigo-500 shrink-0" />
               </div>
               <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{overview?.total_assessments ?? 0}</p>
-              <div className="flex items-center gap-2 mt-2 text-xs text-slate-500">
+              <div className="flex flex-wrap items-center gap-2 mt-2 text-xs text-slate-500">
                 <span className="text-indigo-600 dark:text-indigo-400 font-semibold">+{overview?.assessments_today ?? 0} today</span>
                 <span>•</span>
                 <span>{overview?.assessments_last_7_days ?? 0} in 7d</span>
@@ -357,13 +358,13 @@ export const AdminControlCenter: React.FC = () => {
             </div>
 
             {/* Total Audit Events */}
-            <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+            <div className="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs min-w-0">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Audit Events</span>
-                <ShieldCheck className="w-5 h-5 text-emerald-500" />
+                <ShieldCheck className="w-5 h-5 text-emerald-500 shrink-0" />
               </div>
               <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{overview?.total_audit_events ?? 0}</p>
-              <div className="flex items-center gap-2 mt-2 text-xs text-slate-500">
+              <div className="flex flex-wrap items-center gap-2 mt-2 text-xs text-slate-500">
                 <span className="text-emerald-600 dark:text-emerald-400 font-semibold">+{overview?.audit_events_today ?? 0} today</span>
                 <span>•</span>
                 <span>{overview?.audit_events_last_7_days ?? 0} in 7d</span>
@@ -371,16 +372,16 @@ export const AdminControlCenter: React.FC = () => {
             </div>
 
             {/* Authentication Activity */}
-            <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+            <div className="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs min-w-0">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Auth Telemetry</span>
-                <Key className="w-5 h-5 text-amber-500" />
+                <Key className="w-5 h-5 text-amber-500 shrink-0" />
               </div>
               <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
                 {overview?.login_success_count ?? 0}
                 <span className="text-sm font-normal text-slate-500 ml-1">success</span>
               </p>
-              <div className="flex items-center gap-2 mt-2 text-xs text-slate-500">
+              <div className="flex flex-wrap items-center gap-2 mt-2 text-xs text-slate-500">
                 <span className="text-rose-600 dark:text-rose-400 font-semibold">{overview?.login_failure_count ?? 0} failures</span>
                 <span>•</span>
                 <span>
@@ -393,29 +394,29 @@ export const AdminControlCenter: React.FC = () => {
           </div>
 
           {/* Persistent vs Ephemeral Resource Notice */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div className="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 flex items-center justify-between">
-              <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-5">
+            <div className="p-3.5 sm:p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
+              <div className="min-w-0">
                 <span className="font-semibold block text-slate-800 dark:text-slate-200">Credit Assessment Reports</span>
-                <span>Status: {overview?.total_reports_generated ?? 'Generated on-demand (not persisted)'}</span>
+                <span className="text-[11px] sm:text-xs">Status: {overview?.total_reports_generated ?? 'Generated on-demand (not persisted)'}</span>
               </div>
-              <span className="px-2 py-1 bg-slate-200 dark:bg-slate-700 rounded text-[11px] font-mono">On-Demand</span>
+              <span className="px-2 py-0.5 sm:py-1 bg-slate-200 dark:bg-slate-700 rounded text-[10px] sm:text-[11px] font-mono shrink-0">On-Demand</span>
             </div>
-            <div className="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 flex items-center justify-between">
-              <div>
+            <div className="p-3.5 sm:p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
+              <div className="min-w-0">
                 <span className="font-semibold block text-slate-800 dark:text-slate-200">What-If Risk Simulations</span>
-                <span>Status: {overview?.total_simulations_run ?? 'Evaluated on-demand (not persisted)'}</span>
+                <span className="text-[11px] sm:text-xs">Status: {overview?.total_simulations_run ?? 'Evaluated on-demand (not persisted)'}</span>
               </div>
-              <span className="px-2 py-1 bg-slate-200 dark:bg-slate-700 rounded text-[11px] font-mono">Interactive</span>
+              <span className="px-2 py-0.5 sm:py-1 bg-slate-200 dark:bg-slate-700 rounded text-[10px] sm:text-[11px] font-mono shrink-0">Interactive</span>
             </div>
           </div>
 
           {/* Platform Health Diagnostic Section */}
-          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-xs space-y-4">
-            <div className="flex items-center justify-between">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-xs space-y-4 min-w-0">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <Activity className="w-5 h-5 text-brand-500" />
-                <h3 className="font-bold text-slate-900 dark:text-white">Platform Health & Subsystem Diagnostics</h3>
+                <Activity className="w-5 h-5 text-brand-500 shrink-0" />
+                <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">Platform Health & Subsystem Diagnostics</h3>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-slate-400">Status:</span>
@@ -429,13 +430,13 @@ export const AdminControlCenter: React.FC = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
               {health?.components.map((comp) => {
                 const isOp = comp.status === 'OPERATIONAL';
                 return (
                   <div
                     key={comp.component}
-                    className="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/30 flex items-start gap-3"
+                    className="p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/30 flex items-start gap-3 min-w-0"
                   >
                     {isOp ? (
                       <CheckCircle className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
@@ -443,9 +444,9 @@ export const AdminControlCenter: React.FC = () => {
                       <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                     )}
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200">{comp.component}</h4>
-                        <span className={`text-[10px] font-semibold uppercase ${isOp ? 'text-emerald-600' : 'text-amber-600'}`}>
+                      <div className="flex items-center justify-between gap-1">
+                        <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{comp.component}</h4>
+                        <span className={`text-[10px] font-semibold uppercase shrink-0 ${isOp ? 'text-emerald-600' : 'text-amber-600'}`}>
                           {comp.status}
                         </span>
                       </div>
@@ -453,7 +454,7 @@ export const AdminControlCenter: React.FC = () => {
                         {comp.details}
                       </p>
                       {comp.error && (
-                        <p className="text-[10px] text-rose-500 mt-1 font-mono">{comp.error}</p>
+                        <p className="text-[10px] text-rose-500 mt-1 font-mono truncate">{comp.error}</p>
                       )}
                     </div>
                   </div>
@@ -463,13 +464,13 @@ export const AdminControlCenter: React.FC = () => {
           </div>
 
           {/* Read-Only Model & AI Status Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             {/* Model Status Card */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-xs space-y-4">
-              <div className="flex items-center justify-between">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-xs space-y-4 min-w-0">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <Cpu className="w-5 h-5 text-brand-500" />
-                  <h3 className="font-bold text-slate-900 dark:text-white">Credit ML Model Verification</h3>
+                  <Cpu className="w-5 h-5 text-brand-500 shrink-0" />
+                  <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">Credit ML Model Verification</h3>
                 </div>
                 <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300">
                   Read-Only Authority
@@ -477,30 +478,30 @@ export const AdminControlCenter: React.FC = () => {
               </div>
 
               <div className="space-y-3 text-xs">
-                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-700">
-                  <span className="text-slate-500">Model Artifact</span>
-                  <span className="font-mono text-slate-700 dark:text-slate-300 font-semibold">{modelStatus?.model_file}</span>
+                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-700 gap-2">
+                  <span className="text-slate-500 shrink-0">Model Artifact</span>
+                  <span className="font-mono text-slate-700 dark:text-slate-300 font-semibold truncate text-[11px]">{modelStatus?.model_file}</span>
                 </div>
-                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-700">
-                  <span className="text-slate-500">Model SHA-256 Hash</span>
-                  <span className="font-mono text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded text-[11px]">
+                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-700 gap-2">
+                  <span className="text-slate-500 shrink-0">Model SHA-256</span>
+                  <span className="font-mono text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded text-[10px] sm:text-[11px] truncate max-w-[150px] sm:max-w-[260px]" title={modelStatus?.model_sha256}>
                     {modelStatus?.model_sha256}
                   </span>
                 </div>
-                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-700">
-                  <span className="text-slate-500">Preprocessing Pipeline</span>
-                  <span className="font-mono text-slate-700 dark:text-slate-300 font-semibold">{modelStatus?.preprocessing_file}</span>
+                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-700 gap-2">
+                  <span className="text-slate-500 shrink-0">Preprocessing Pipeline</span>
+                  <span className="font-mono text-slate-700 dark:text-slate-300 font-semibold truncate text-[11px]">{modelStatus?.preprocessing_file}</span>
                 </div>
-                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-700">
-                  <span className="text-slate-500">Pipeline SHA-256 Hash</span>
-                  <span className="font-mono text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded text-[11px]">
+                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-700 gap-2">
+                  <span className="text-slate-500 shrink-0">Pipeline SHA-256</span>
+                  <span className="font-mono text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded text-[10px] sm:text-[11px] truncate max-w-[150px] sm:max-w-[260px]" title={modelStatus?.preprocessing_sha256}>
                     {modelStatus?.preprocessing_sha256}
                   </span>
                 </div>
-                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-700">
-                  <span className="text-slate-500">Decision Threshold</span>
+                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-700 gap-2">
+                  <span className="text-slate-500 shrink-0">Decision Threshold</span>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-brand-600 dark:text-brand-400 text-sm">
+                    <span className="font-bold text-brand-600 dark:text-brand-400 text-xs sm:text-sm">
                       {modelStatus?.current_threshold} (35%)
                     </span>
                     <span className="px-1.5 py-0.5 text-[10px] bg-emerald-100 text-emerald-800 rounded font-semibold">
@@ -518,11 +519,11 @@ export const AdminControlCenter: React.FC = () => {
             </div>
 
             {/* NVIDIA AI Status Card */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-xs space-y-4">
-              <div className="flex items-center justify-between">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-xs space-y-4 min-w-0">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-emerald-500" />
-                  <h3 className="font-bold text-slate-900 dark:text-white">NVIDIA AI Explainability Layer</h3>
+                  <Sparkles className="w-5 h-5 text-emerald-500 shrink-0" />
+                  <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">NVIDIA AI Explainability Layer</h3>
                 </div>
                 <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
                   Integrated
@@ -530,25 +531,25 @@ export const AdminControlCenter: React.FC = () => {
               </div>
 
               <div className="space-y-3 text-xs">
-                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-700">
-                  <span className="text-slate-500">AI Provider</span>
-                  <span className="font-semibold text-slate-700 dark:text-slate-300">NVIDIA NIM / Cloud Inference</span>
+                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-700 gap-2">
+                  <span className="text-slate-500 shrink-0">AI Provider</span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-300 truncate">NVIDIA NIM / Cloud Inference</span>
                 </div>
-                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-700">
-                  <span className="text-slate-500">Target Foundation Model</span>
-                  <span className="font-mono text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded text-[11px]">
+                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-700 gap-2">
+                  <span className="text-slate-500 shrink-0">Target Foundation Model</span>
+                  <span className="font-mono text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded text-[10px] sm:text-[11px] truncate max-w-[150px] sm:max-w-none">
                     meta/llama-3.1-70b-instruct
                   </span>
                 </div>
-                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-700">
-                  <span className="text-slate-500">Secret Storage</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
+                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-700 gap-2">
+                  <span className="text-slate-500 shrink-0">Secret Storage</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold text-right text-[11px] sm:text-xs">
                     Server-Side Only (Zero Frontend Exposure)
                   </span>
                 </div>
-                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-700">
-                  <span className="text-slate-500">Fallback Protection</span>
-                  <span className="font-semibold text-slate-700 dark:text-slate-300">
+                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-700 gap-2">
+                  <span className="text-slate-500 shrink-0">Fallback Protection</span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-300 text-right text-[11px] sm:text-xs">
                     Deterministic Feature Engine (100% resilient)
                   </span>
                 </div>
@@ -567,19 +568,19 @@ export const AdminControlCenter: React.FC = () => {
       {/* TAB 2: USER MANAGEMENT                                         */}
       {/* ============================================================== */}
       {activeSubTab === 'users' && (
-        <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-xs space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-xs space-y-6 min-w-0">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
             <div>
-              <h3 className="font-bold text-lg text-slate-900 dark:text-white">Platform User Access Management</h3>
+              <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white">Platform User Access Management</h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 Grant, restrict, and audit user roles and credentials across the organization.
               </p>
             </div>
             <button
               onClick={() => setShowCreateUserModal(true)}
-              className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-xs rounded-xl shadow-xs flex items-center gap-2"
+              className="w-full sm:w-auto justify-center px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-xs rounded-xl shadow-xs flex items-center gap-2"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4 shrink-0" />
               <span>Create New User</span>
             </button>
           </div>
@@ -633,8 +634,8 @@ export const AdminControlCenter: React.FC = () => {
           </div>
 
           {/* Users Table */}
-          <div className="overflow-x-auto border border-slate-200 dark:border-slate-700 rounded-xl">
-            <table className="w-full text-left text-xs">
+          <div className="overflow-x-auto border border-slate-200 dark:border-slate-700 rounded-xl -mx-1 sm:mx-0">
+            <table className="w-full text-left text-xs min-w-[620px]">
               <thead className="bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">
                 <tr>
                   <th className="py-3 px-4">User</th>
@@ -704,7 +705,7 @@ export const AdminControlCenter: React.FC = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex items-center justify-between text-xs text-slate-500">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate-500">
             <span>
               Showing {usersData?.items.length ?? 0} of {usersData?.total ?? 0} users (Page {usersData?.page ?? 1} of {usersData?.total_pages ?? 1})
             </span>
@@ -732,9 +733,9 @@ export const AdminControlCenter: React.FC = () => {
       {/* TAB 3: AUDIT LOG CENTER                                        */}
       {/* ============================================================== */}
       {activeSubTab === 'audit' && (
-        <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-xs space-y-6">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-xs space-y-6 min-w-0">
           <div>
-            <h3 className="font-bold text-lg text-slate-900 dark:text-white">Security & Operation Audit Logs</h3>
+            <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white">Security & Operation Audit Logs</h3>
             <p className="text-xs text-slate-500 dark:text-slate-400">
               Immutable ledger of platform authentication attempts, role modifications, and ML prediction runs.
             </p>
@@ -817,8 +818,8 @@ export const AdminControlCenter: React.FC = () => {
           </div>
 
           {/* Audit Logs Table */}
-          <div className="overflow-x-auto border border-slate-200 dark:border-slate-700 rounded-xl">
-            <table className="w-full text-left text-xs">
+          <div className="overflow-x-auto border border-slate-200 dark:border-slate-700 rounded-xl -mx-1 sm:mx-0">
+            <table className="w-full text-left text-xs min-w-[680px]">
               <thead className="bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">
                 <tr>
                   <th className="py-3 px-4">Timestamp</th>
@@ -866,7 +867,7 @@ export const AdminControlCenter: React.FC = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex items-center justify-between text-xs text-slate-500">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate-500">
             <span>
               Showing {auditData?.items.length ?? 0} of {auditData?.total ?? 0} events (Page {auditData?.page ?? 1} of {auditData?.total_pages ?? 1})
             </span>
@@ -894,39 +895,39 @@ export const AdminControlCenter: React.FC = () => {
       {/* TAB 4: SECURITY & RATE LIMITS                                  */}
       {/* ============================================================== */}
       {activeSubTab === 'security' && (
-        <div className="space-y-6">
+        <div className="space-y-6 min-w-0">
           {/* Rate Limiting Configuration Card */}
-          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-xs space-y-4">
-            <div className="flex items-center justify-between">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-xs space-y-4 min-w-0">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <Lock className="w-5 h-5 text-brand-500" />
-                <h3 className="font-bold text-slate-900 dark:text-white">Active Rate Limiting Policies</h3>
+                <Lock className="w-5 h-5 text-brand-500 shrink-0" />
+                <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white">Active Rate Limiting Policies</h3>
               </div>
               <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
                 Active Enforcing
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-              <div className="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-xs">
+              <div className="p-3.5 sm:p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700">
                 <span className="text-slate-500 block mb-1">Login Endpoint Policy</span>
-                <span className="font-semibold text-slate-800 dark:text-slate-200 text-sm">
+                <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs sm:text-sm">
                   10 attempts / min per IP
                 </span>
                 <p className="text-[11px] text-slate-400 mt-1">Protects against credential stuffing</p>
               </div>
 
-              <div className="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700">
+              <div className="p-3.5 sm:p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700">
                 <span className="text-slate-500 block mb-1">Prediction Endpoint Policy</span>
-                <span className="font-semibold text-slate-800 dark:text-slate-200 text-sm">
+                <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs sm:text-sm">
                   30 requests / min per IP
                 </span>
                 <p className="text-[11px] text-slate-400 mt-1">Safeguards inference throughput</p>
               </div>
 
-              <div className="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700">
+              <div className="p-3.5 sm:p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700">
                 <span className="text-slate-500 block mb-1">Storage Mode</span>
-                <span className="font-semibold text-slate-800 dark:text-slate-200 text-sm">
+                <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs sm:text-sm">
                   {securityData?.rate_limiting.storage_mode ?? 'In-memory Sliding Window'}
                 </span>
                 <p className="text-[11px] text-slate-400 mt-1">
@@ -937,13 +938,13 @@ export const AdminControlCenter: React.FC = () => {
           </div>
 
           {/* Recent Security Activity Lists */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             {/* Failed Login Attempts */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-xs space-y-4">
-              <div className="flex items-center justify-between">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-xs space-y-4 min-w-0">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <UserX className="w-5 h-5 text-rose-500" />
-                  <h3 className="font-bold text-slate-900 dark:text-white">Recent Failed Logins</h3>
+                  <UserX className="w-5 h-5 text-rose-500 shrink-0" />
+                  <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">Recent Failed Logins</h3>
                 </div>
                 <span className="text-xs text-rose-500 font-semibold">
                   {securityData?.login_stats.failed_logins ?? 0} Total Recorded
@@ -953,16 +954,16 @@ export const AdminControlCenter: React.FC = () => {
               <div className="divide-y divide-slate-100 dark:divide-slate-700/60 max-h-72 overflow-y-auto">
                 {securityData?.recent_failed_logins && securityData.recent_failed_logins.length > 0 ? (
                   securityData.recent_failed_logins.map((item) => (
-                    <div key={item.id} className="py-2.5 text-xs flex items-center justify-between">
-                      <div>
-                        <span className="font-semibold text-slate-800 dark:text-slate-200 block">
+                    <div key={item.id} className="py-2.5 text-xs flex items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <span className="font-semibold text-slate-800 dark:text-slate-200 block truncate">
                           {item.details || 'Failed login attempt'}
                         </span>
                         <span className="text-[11px] text-slate-400">
                           {item.timestamp ? new Date(item.timestamp).toLocaleString() : ''}
                         </span>
                       </div>
-                      <span className="px-2 py-0.5 text-[10px] bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 rounded font-semibold">
+                      <span className="px-2 py-0.5 text-[10px] bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 rounded font-semibold shrink-0">
                         FAIL
                       </span>
                     </div>
@@ -974,11 +975,11 @@ export const AdminControlCenter: React.FC = () => {
             </div>
 
             {/* Recent User Management Activity */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-xs space-y-4">
-              <div className="flex items-center justify-between">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-xs space-y-4 min-w-0">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <UserCheck className="w-5 h-5 text-brand-500" />
-                  <h3 className="font-bold text-slate-900 dark:text-white">User Management Modifications</h3>
+                  <UserCheck className="w-5 h-5 text-brand-500 shrink-0" />
+                  <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">User Management Modifications</h3>
                 </div>
                 <span className="text-xs text-slate-400">Security Events</span>
               </div>
@@ -986,16 +987,16 @@ export const AdminControlCenter: React.FC = () => {
               <div className="divide-y divide-slate-100 dark:divide-slate-700/60 max-h-72 overflow-y-auto">
                 {securityData?.recent_user_management_activity && securityData.recent_user_management_activity.length > 0 ? (
                   securityData.recent_user_management_activity.map((item) => (
-                    <div key={item.id} className="py-2.5 text-xs flex items-center justify-between">
-                      <div>
-                        <span className="font-semibold text-slate-800 dark:text-slate-200 block">
+                    <div key={item.id} className="py-2.5 text-xs flex items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <span className="font-semibold text-slate-800 dark:text-slate-200 block truncate">
                           {item.action}: {item.details || 'Role or state modified'}
                         </span>
                         <span className="text-[11px] text-slate-400">
                           {item.timestamp ? new Date(item.timestamp).toLocaleString() : ''}
                         </span>
                       </div>
-                      <span className="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300 rounded font-semibold">
+                      <span className="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300 rounded font-semibold shrink-0">
                         {item.status}
                       </span>
                     </div>
@@ -1011,10 +1012,10 @@ export const AdminControlCenter: React.FC = () => {
 
       {/* Create User Modal */}
       {showCreateUserModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 dark:border-slate-700 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-4 sm:p-6 shadow-xl border border-slate-200 dark:border-slate-700 space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Create New Platform User</h3>
+              <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Create New Platform User</h3>
               <button
                 onClick={() => setShowCreateUserModal(false)}
                 className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
@@ -1083,18 +1084,18 @@ export const AdminControlCenter: React.FC = () => {
                 </select>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2">
+              <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setShowCreateUserModal(false)}
-                  className="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl"
+                  className="w-full sm:w-auto px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-center"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submittingUser}
-                  className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-xl shadow-xs"
+                  className="w-full sm:w-auto px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-xl shadow-xs text-center"
                 >
                   {submittingUser ? 'Creating...' : 'Create Account'}
                 </button>

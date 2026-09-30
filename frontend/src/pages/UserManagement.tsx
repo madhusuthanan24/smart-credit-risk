@@ -76,30 +76,30 @@ export const UserManagement: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 min-w-0">
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Users className="w-7 h-7 text-brand-500" />
-            User Access & Role Management
+        <div className="min-w-0">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <Users className="w-6 h-6 sm:w-7 sm:h-7 text-brand-500 shrink-0" />
+            <span className="truncate">User Access & Role Management</span>
           </h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
             Administrate identity privileges, permissions, and security roles across the platform.
           </p>
         </div>
 
         <button
           onClick={() => setShowCreateModal(true)}
-          className="px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-xl transition-all shadow-sm flex items-center gap-2 text-sm"
+          className="w-full sm:w-auto justify-center px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-xl transition-all shadow-sm flex items-center gap-2 text-xs sm:text-sm"
         >
-          <UserPlus className="w-4 h-4" />
+          <UserPlus className="w-4 h-4 shrink-0" />
           <span>Create New User</span>
         </button>
       </div>
 
       {error && (
-        <div className="p-4 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-300 text-sm flex items-center gap-2">
+        <div className="p-3 sm:p-4 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-300 text-xs sm:text-sm flex items-center gap-2">
           <AlertCircle className="w-5 h-5 shrink-0" />
           <span>{error}</span>
         </div>
@@ -108,17 +108,17 @@ export const UserManagement: React.FC = () => {
       {/* Users Table */}
       <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[620px]">
             <thead>
               <tr className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                <th className="py-3.5 px-6">User / Email</th>
-                <th className="py-3.5 px-6">Assigned Role</th>
-                <th className="py-3.5 px-6">Account Status</th>
-                <th className="py-3.5 px-6">Created Date</th>
-                <th className="py-3.5 px-6 text-right">Actions</th>
+                <th className="py-3 sm:py-3.5 px-4 sm:px-6">User / Email</th>
+                <th className="py-3 sm:py-3.5 px-4 sm:px-6">Assigned Role</th>
+                <th className="py-3 sm:py-3.5 px-4 sm:px-6">Account Status</th>
+                <th className="py-3 sm:py-3.5 px-4 sm:px-6">Created Date</th>
+                <th className="py-3 sm:py-3.5 px-4 sm:px-6 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60 text-sm">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60 text-xs sm:text-sm">
               {loading ? (
                 <tr>
                   <td colSpan={5} className="py-8 text-center text-slate-400">
@@ -135,13 +135,15 @@ export const UserManagement: React.FC = () => {
               ) : (
                 users.map((u) => (
                   <tr key={u.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-all">
-                    <td className="py-4 px-6 font-medium text-slate-900 dark:text-white">
-                      {u.email}
-                      {u.id === currentUser?.id && (
-                        <span className="ml-2 text-[10px] bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-300 font-semibold px-2 py-0.5 rounded-full">You</span>
-                      )}
+                    <td className="py-3.5 sm:py-4 px-4 sm:px-6 font-medium text-slate-900 dark:text-white">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="truncate max-w-[180px] sm:max-w-none">{u.email}</span>
+                        {u.id === currentUser?.id && (
+                          <span className="text-[10px] bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-300 font-semibold px-2 py-0.5 rounded-full shrink-0">You</span>
+                        )}
+                      </div>
                     </td>
-                    <td className="py-4 px-6">
+                    <td className="py-3.5 sm:py-4 px-4 sm:px-6">
                       <select
                         value={u.role}
                         onChange={(e) => handleRoleChange(u.id, e.target.value)}
@@ -152,7 +154,7 @@ export const UserManagement: React.FC = () => {
                         <option value="VIEWER">VIEWER</option>
                       </select>
                     </td>
-                    <td className="py-4 px-6">
+                    <td className="py-3.5 sm:py-4 px-4 sm:px-6">
                       {u.is_active ? (
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 rounded-full text-xs font-semibold">
                           <CheckCircle className="w-3.5 h-3.5" /> Active
@@ -163,10 +165,10 @@ export const UserManagement: React.FC = () => {
                         </span>
                       )}
                     </td>
-                    <td className="py-4 px-6 text-slate-500 dark:text-slate-400 text-xs">
+                    <td className="py-3.5 sm:py-4 px-4 sm:px-6 text-slate-500 dark:text-slate-400 text-xs">
                       {u.created_at || 'N/A'}
                     </td>
-                    <td className="py-4 px-6 text-right">
+                    <td className="py-3.5 sm:py-4 px-4 sm:px-6 text-right">
                       <button
                         onClick={() => handleToggleActive(u.id, u.is_active)}
                         className={`text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all ${
@@ -188,16 +190,16 @@ export const UserManagement: React.FC = () => {
 
       {/* Create User Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-xl">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-              <UserPlus className="w-5 h-5 text-brand-500" />
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto">
+          <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl max-w-md w-full p-4 sm:p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+              <UserPlus className="w-5 h-5 text-brand-500 shrink-0" />
               Create Platform Account
             </h3>
 
             {formError && (
               <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 text-red-700 dark:text-red-300 text-xs rounded-xl flex items-center gap-2">
-                <AlertCircle className="w-4 h-4" />
+                <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{formError}</span>
               </div>
             )}
@@ -211,7 +213,7 @@ export const UserManagement: React.FC = () => {
                   onChange={(e) => setNewEmail(e.target.value)}
                   required
                   placeholder="officer@bank.com"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm"
                 />
               </div>
 
@@ -224,7 +226,7 @@ export const UserManagement: React.FC = () => {
                   required
                   minLength={6}
                   placeholder="••••••••••••"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm"
                 />
               </div>
 
@@ -233,7 +235,7 @@ export const UserManagement: React.FC = () => {
                 <select
                   value={newRole}
                   onChange={(e) => setNewRole(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm"
                 >
                   <option value="CREDIT_OFFICER">CREDIT_OFFICER (Assessor)</option>
                   <option value="ADMIN">ADMIN (Full Security Control)</option>
@@ -241,18 +243,18 @@ export const UserManagement: React.FC = () => {
                 </select>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
+              <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2 sm:gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl"
+                  className="w-full sm:w-auto px-4 py-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl text-center"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={creating}
-                  className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl shadow-xs"
+                  className="w-full sm:w-auto px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-xs text-center"
                 >
                   {creating ? 'Creating...' : 'Create Account'}
                 </button>

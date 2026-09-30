@@ -21,6 +21,7 @@ const MainLayout: React.FC = () => {
   const { isAuthenticated, isLoading, role } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [darkMode, setDarkMode] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (darkMode) {
@@ -29,6 +30,12 @@ const MainLayout: React.FC = () => {
       document.documentElement.classList.remove('dark');
     }
   }, [darkMode]);
+
+  // Auto-close mobile sidebar on tab change
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    setSidebarOpen(false);
+  };
 
   if (isLoading) {
     return (
@@ -57,22 +64,31 @@ const MainLayout: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans overflow-x-hidden">
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={handleTabChange}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
       
-      <div className="flex-1 flex flex-col min-w-0">
-        <Header darkMode={darkMode} setDarkMode={setDarkMode} />
+      <div className="flex-1 flex flex-col min-w-0 max-w-full">
+        <Header
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+          onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
+        />
         
-        <main className="flex-1 p-8 overflow-y-auto">
+        <main className="flex-1 p-3.5 sm:p-6 md:p-8 overflow-y-auto min-w-0 max-w-full">
           {!canAccessTab(activeTab) ? (
-            <div className="p-8 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-center max-w-md mx-auto my-12 shadow-sm">
+            <div className="p-6 sm:p-8 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-center max-w-md mx-auto my-8 sm:my-12 shadow-sm">
               <ShieldAlert className="w-12 h-12 text-rose-500 mx-auto mb-3" />
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">403 Forbidden - Access Restricted</h3>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 mb-6">
                 Your assigned role (<span className="font-semibold text-slate-700 dark:text-slate-200">{role}</span>) does not have authorization to view this section.
               </p>
               <button
-                onClick={() => setActiveTab('dashboard')}
+                onClick={() => handleTabChange('dashboard')}
                 className="px-4 py-2 bg-brand-500 text-white font-semibold text-sm rounded-xl shadow-xs"
               >
                 Return to Dashboard
@@ -80,11 +96,11 @@ const MainLayout: React.FC = () => {
             </div>
           ) : (
             <>
-              {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
+              {activeTab === 'dashboard' && <Dashboard setActiveTab={handleTabChange} />}
               {activeTab === 'new-assessment' && <NewAssessment />}
               {activeTab === 'simulator' && <Simulator />}
               {activeTab === 'history' && <AssessmentHistory />}
-              {activeTab === 'analytics' && <Analytics setActiveTab={setActiveTab} />}
+              {activeTab === 'analytics' && <Analytics setActiveTab={handleTabChange} />}
               {activeTab === 'monitoring' && <Monitoring />}
               {activeTab === 'governance' && <Governance />}
               {activeTab === 'model-info' && <ModelInfo />}

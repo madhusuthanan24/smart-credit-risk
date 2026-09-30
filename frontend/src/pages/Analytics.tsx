@@ -189,31 +189,31 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
   })) || [];
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-6 pb-12 min-w-0">
       {/* Top Header Banner */}
-      <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-brand-500 text-white rounded-xl shadow-md">
-            <BarChart3 className="w-7 h-7" />
+          <div className="p-2.5 sm:p-3 bg-brand-500 text-white rounded-xl shadow-md flex-shrink-0">
+            <BarChart3 className="w-6 h-6 sm:w-7 sm:h-7" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Executive Decision Intelligence</h1>
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Executive Decision Intelligence</h1>
               <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
                 Phase H Verified
               </span>
             </div>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
               Portfolio risk overview, assessment volume trends, probability distributions, and operational telemetry.
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 w-full sm:w-auto">
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl transition flex items-center gap-2"
+            className="w-full sm:w-auto px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl transition flex items-center justify-center gap-2"
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
             <span>{refreshing ? 'Refreshing...' : 'Refresh Telemetry'}</span>
@@ -223,19 +223,19 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
 
       {/* Global Error Banner */}
       {error && (
-        <div className="p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl text-rose-700 dark:text-rose-300 flex items-center gap-3 text-sm">
+        <div className="p-3.5 sm:p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl text-rose-700 dark:text-rose-300 flex items-center gap-3 text-xs sm:text-sm">
           <AlertCircle className="w-5 h-5 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Executive Headline Summary Banner */}
-      <div className="bg-gradient-to-r from-brand-50 to-indigo-50/60 dark:from-slate-800 dark:to-slate-800/80 p-5 rounded-2xl border border-brand-200/60 dark:border-slate-700 shadow-xs flex items-start gap-4">
-        <div className="p-2.5 bg-brand-500 text-white rounded-xl shrink-0 mt-0.5 shadow-sm">
-          <ShieldCheck className="w-6 h-6" />
+      <div className="bg-gradient-to-r from-brand-50 to-indigo-50/60 dark:from-slate-800 dark:to-slate-800/80 p-4 sm:p-5 rounded-2xl border border-brand-200/60 dark:border-slate-700 shadow-xs flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
+        <div className="p-2 sm:p-2.5 bg-brand-500 text-white rounded-xl shrink-0 mt-0.5 shadow-sm">
+          <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" />
         </div>
-        <div className="flex-1">
-          <div className="flex items-center justify-between">
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-wrap items-center justify-between gap-1">
             <h3 className="text-xs font-bold uppercase tracking-wider text-brand-700 dark:text-brand-300">
               Executive Portfolio Brief
             </h3>
@@ -243,17 +243,17 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
               Threshold: 0.35 (Locked)
             </span>
           </div>
-          <p className="text-sm font-medium text-slate-800 dark:text-slate-200 mt-1 leading-relaxed">
+          <p className="text-xs sm:text-sm font-medium text-slate-800 dark:text-slate-200 mt-1 leading-relaxed">
             {overview?.executive_summary_text || 'Synthesizing portfolio intelligence...'}
           </p>
         </div>
       </div>
 
       {/* Filter Controls Bar */}
-      <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-3">
+      <div className="bg-white dark:bg-slate-800 p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-3">
         <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-2">
           <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-            <Filter className="w-4 h-4 text-brand-500" />
+            <Filter className="w-4 h-4 text-brand-500 flex-shrink-0" />
             <span>Portfolio Filter Controls</span>
           </div>
           <button
@@ -264,7 +264,7 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 text-xs">
           {/* Period Selector */}
           <div>
             <label className="block text-slate-500 dark:text-slate-400 mb-1 font-medium">Reporting Window</label>
@@ -320,16 +320,16 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
       </div>
 
       {/* SECTION 1: PORTFOLIO OVERVIEW KPI GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
         {/* Total Assessments */}
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+        <div className="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               Total Volume
             </span>
             <Activity className="w-5 h-5 text-brand-500" />
           </div>
-          <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{kpis?.total_assessments ?? 0}</p>
+          <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-2">{kpis?.total_assessments ?? 0}</p>
           <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-500">
             <span className="text-emerald-600 dark:text-emerald-400 font-semibold">+{kpis?.assessments_today ?? 0} today</span>
             <span>•</span>
@@ -338,56 +338,56 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
         </div>
 
         {/* Low Risk */}
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+        <div className="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               Low Risk
             </span>
             <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
           </div>
-          <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-2">{kpis?.low_risk_count ?? 0}</p>
+          <p className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-2">{kpis?.low_risk_count ?? 0}</p>
           <p className="text-xs text-slate-500 mt-2">
             Share: <strong className="text-slate-800 dark:text-slate-200">{kpis?.low_risk_pct_str ?? '0.0%'}</strong> of portfolio
           </p>
         </div>
 
         {/* Moderate Risk */}
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+        <div className="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               Moderate Risk
             </span>
             <span className="w-3 h-3 rounded-full bg-amber-500"></span>
           </div>
-          <p className="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-2">{kpis?.moderate_risk_count ?? 0}</p>
+          <p className="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-400 mt-2">{kpis?.moderate_risk_count ?? 0}</p>
           <p className="text-xs text-slate-500 mt-2">
             Share: <strong className="text-slate-800 dark:text-slate-200">{kpis?.moderate_risk_pct_str ?? '0.0%'}</strong> (Buffer Zone)
           </p>
         </div>
 
         {/* High Risk */}
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+        <div className="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               High Risk
             </span>
             <span className="w-3 h-3 rounded-full bg-rose-500"></span>
           </div>
-          <p className="text-2xl font-bold text-rose-600 dark:text-rose-400 mt-2">{kpis?.high_risk_count ?? 0}</p>
+          <p className="text-xl sm:text-2xl font-bold text-rose-600 dark:text-rose-400 mt-2">{kpis?.high_risk_count ?? 0}</p>
           <p className="text-xs text-slate-500 mt-2">
             Share: <strong className="text-slate-800 dark:text-slate-200">{kpis?.high_risk_pct_str ?? '0.0%'}</strong> (&ge; 35% Cutoff)
           </p>
         </div>
 
         {/* Average Default Probability */}
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+        <div className="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               Avg Probability
             </span>
             <TrendingUp className="w-5 h-5 text-indigo-500" />
           </div>
-          <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
+          <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-2">
             {kpis?.avg_default_probability_pct ?? '0.0%'}
           </p>
           <p className="text-xs text-slate-500 mt-2">
@@ -407,12 +407,12 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
       ) : (
         <>
           {/* SECTION 2 & 3: ASSESSMENT ACTIVITY TRENDS & RISK DISTRIBUTION */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 min-w-0">
             {/* Assessment Volume & Probability Time-Series (2 cols) */}
-            <div className="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-4">
+            <div className="lg:col-span-2 bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-4 min-w-0">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                 <div>
-                  <h3 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                  <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white flex items-center gap-2">
                     <TrendingUp className="w-5 h-5 text-brand-500" />
                     <span>Assessment Activity &amp; Probability Trend</span>
                   </h3>
@@ -425,7 +425,7 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
                 </span>
               </div>
 
-              <div className="h-72">
+              <div className="h-60 sm:h-72 w-full min-w-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={trends?.trends || []}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
@@ -447,9 +447,9 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
             </div>
 
             {/* Risk Distribution Donut (1 col) */}
-            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-4">
+            <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-4 min-w-0">
               <div>
-                <h3 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white flex items-center gap-2">
                   <PieIcon className="w-5 h-5 text-emerald-500" />
                   <span>Risk Distribution</span>
                 </h3>
@@ -458,7 +458,7 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
                 </p>
               </div>
 
-              <div className="h-52">
+              <div className="h-48 sm:h-52 w-full min-w-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie data={pieChartData} cx="50%" cy="50%" innerRadius={50} outerRadius={75} paddingAngle={4} dataKey="value">
@@ -491,10 +491,10 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
           </div>
 
           {/* SECTION 4: PROBABILITY DISTRIBUTION HISTOGRAM (10% BINS & 35% THRESHOLD) */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-4">
+          <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-4 min-w-0">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
               <div>
-                <h3 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white flex items-center gap-2">
                   <BarChart3 className="w-5 h-5 text-indigo-500" />
                   <span>Predicted Default Probability Distribution</span>
                 </h3>
@@ -502,7 +502,7 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
                   Continuous probability density segmented into 10% bins with the 35% production threshold demarcation line.
                 </p>
               </div>
-              <div className="flex items-center gap-3 text-xs">
+              <div className="flex items-center gap-2 sm:gap-3 text-xs">
                 <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-mono">
                   Mean: {probDist?.mean_probability_pct ?? '0.0%'}
                 </span>
@@ -512,7 +512,7 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
               </div>
             </div>
 
-            <div className="h-64">
+            <div className="h-52 sm:h-64 w-full min-w-0">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={probDist?.histogram || []}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
@@ -535,10 +535,10 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
           </div>
 
           {/* SECTION 5: RISK CONCENTRATION ANALYSIS */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-4 min-w-0">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
               <div>
-                <h3 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white flex items-center gap-2">
                   <Layers className="w-5 h-5 text-brand-500" />
                   <span>Risk Concentration Analysis</span>
                 </h3>
@@ -548,12 +548,12 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
               </div>
 
               {/* Dimension Switcher */}
-              <div className="flex items-center gap-2 text-xs">
+              <div className="flex items-center gap-2 text-xs w-full sm:w-auto">
                 <span className="text-slate-500 font-medium">Dimension:</span>
                 <select
                   value={selectedDimension}
                   onChange={(e) => setSelectedDimension(e.target.value)}
-                  className="px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-800 dark:text-slate-200 focus:outline-hidden"
+                  className="w-full sm:w-auto px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-800 dark:text-slate-200 focus:outline-hidden"
                 >
                   <option value="age_bracket">Applicant Age Brackets</option>
                   <option value="housing">Housing Tenure</option>
@@ -577,8 +577,8 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
             </div>
 
             {/* Concentration Table */}
-            <div className="overflow-x-auto border border-slate-200 dark:border-slate-700 rounded-xl">
-              <table className="w-full text-left text-xs">
+            <div className="overflow-x-auto border border-slate-200 dark:border-slate-700 rounded-xl w-full">
+              <table className="w-full text-left text-xs min-w-[640px]">
                 <thead className="bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">
                   <tr>
                     <th className="py-3 px-4">Group Segment</th>
@@ -622,11 +622,11 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
           </div>
 
           {/* SECTION 6 & 7: OPERATIONAL ACTIVITY & GOVERNANCE SNAPSHOT */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 min-w-0">
             {/* Operational Activity Card */}
-            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-4">
+            <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-4 min-w-0">
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white flex items-center gap-2">
                   <Database className="w-5 h-5 text-brand-500" />
                   <span>Platform Operational Telemetry</span>
                 </h3>
@@ -664,9 +664,9 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
             </div>
 
             {/* Model & Governance Snapshot Card */}
-            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-4">
+            <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-4 min-w-0">
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white flex items-center gap-2">
                   <Cpu className="w-5 h-5 text-indigo-500" />
                   <span>Model Governance &amp; Artifact Verification</span>
                 </h3>
@@ -724,18 +724,18 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
           </div>
 
           {/* SECTION 8: OPTIONAL NVIDIA AI EXECUTIVE NARRATIVE */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-4">
+          <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-4 min-w-0">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-brand-500" />
-                <h3 className="font-bold text-base text-slate-900 dark:text-white">
+                <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">
                   Executive AI Portfolio Commentary (Optional)
                 </h3>
               </div>
               <button
                 onClick={loadAISummary}
                 disabled={aiLoading}
-                className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center gap-2 transition"
+                className="w-full sm:w-auto px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center justify-center gap-2 transition"
               >
                 <Sparkles className={`w-3.5 h-3.5 ${aiLoading ? 'animate-spin' : ''}`} />
                 <span>{aiLoading ? 'Generating...' : aiSummary ? 'Regenerate Narrative' : 'Generate AI Summary'}</span>
@@ -744,7 +744,7 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
 
             {aiSummary ? (
               <div className="space-y-4 pt-2 text-xs">
-                <div className="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700">
+                <div className="p-3 sm:p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700">
                   <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-1">Portfolio Synthesis</h4>
                   <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
                     {aiSummary.portfolio_summary}
@@ -752,7 +752,7 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700">
+                  <div className="p-3 sm:p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700">
                     <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2">Notable Risk Observations</h4>
                     <ul className="space-y-1.5 list-disc list-inside text-slate-600 dark:text-slate-300">
                       {aiSummary.notable_observations.map((obs, idx) => (
@@ -761,7 +761,7 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
                     </ul>
                   </div>
 
-                  <div className="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700">
+                  <div className="p-3 sm:p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700">
                     <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2">Operational Recommendations</h4>
                     <ul className="space-y-1.5 list-disc list-inside text-slate-600 dark:text-slate-300">
                       {aiSummary.operational_recommendations.map((rec, idx) => (
@@ -771,7 +771,7 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setActiveTab }) => {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-slate-400 pt-1 gap-1">
                   <span>Provider: {aiSummary.ai_provider} ({aiSummary.ai_model})</span>
                   <span>Advisory only — Credit scoring governed exclusively by local ML engine</span>
                 </div>

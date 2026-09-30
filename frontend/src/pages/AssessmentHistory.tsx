@@ -59,16 +59,16 @@ export const AssessmentHistory: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 min-w-0">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Assessment History</h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Audit log of all historical credit predictions stored in PostgreSQL / database.</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Assessment History</h2>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Audit log of all historical credit predictions stored in PostgreSQL / database.</p>
         </div>
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 bg-white dark:bg-slate-800 p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
         <div className="relative flex-1 w-full">
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
@@ -76,15 +76,15 @@ export const AssessmentHistory: React.FC = () => {
             placeholder="Search by Assessment ID or Applicant ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500/20"
+            className="w-full pl-10 pr-4 py-2 sm:py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm outline-none focus:ring-2 focus:ring-brand-500/20"
           />
         </div>
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <Filter className="w-4 h-4 text-slate-400" />
+          <Filter className="w-4 h-4 text-slate-400 flex-shrink-0" />
           <select
             value={riskFilter}
             onChange={(e) => setRiskFilter(e.target.value)}
-            className="px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium outline-none"
+            className="w-full sm:w-auto px-3 sm:px-4 py-2 sm:py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-medium outline-none"
           >
             <option value="ALL">All Risk Categories</option>
             <option value="LOW RISK">Low Risk</option>
@@ -96,18 +96,18 @@ export const AssessmentHistory: React.FC = () => {
 
       {/* History Data Table */}
       <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-left border-collapse min-w-[680px]">
             <thead>
               <tr className="bg-slate-50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-100 dark:border-slate-700">
-                <th className="py-3.5 px-6">Prediction ID</th>
-                <th className="py-3.5 px-6">Date</th>
-                <th className="py-3.5 px-6">Credit Amount</th>
-                <th className="py-3.5 px-6">Duration</th>
-                <th className="py-3.5 px-6">Default Prob</th>
-                <th className="py-3.5 px-6">Risk Category</th>
-                <th className="py-3.5 px-6">Decision</th>
-                <th className="py-3.5 px-6 text-right">Actions</th>
+                <th className="py-3 px-4 sm:px-6">Prediction ID</th>
+                <th className="py-3 px-4 sm:px-6">Date</th>
+                <th className="py-3 px-4 sm:px-6">Credit Amount</th>
+                <th className="py-3 px-4 sm:px-6">Duration</th>
+                <th className="py-3 px-4 sm:px-6">Default Prob</th>
+                <th className="py-3 px-4 sm:px-6">Risk Category</th>
+                <th className="py-3 px-4 sm:px-6">Decision</th>
+                <th className="py-3 px-4 sm:px-6 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-700 text-sm">
@@ -177,23 +177,23 @@ export const AssessmentHistory: React.FC = () => {
 
       {/* Assessment Detail Modal */}
       {selectedDetail && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-slate-800 w-full max-w-2xl rounded-2xl p-6 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-4">
-              <h3 className="font-bold text-slate-900 dark:text-white text-lg">Assessment Details</h3>
-              <button onClick={() => setSelectedDetail(null)} className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 z-50">
+          <div className="bg-white dark:bg-slate-800 w-full max-w-2xl rounded-2xl p-4 sm:p-6 space-y-4 sm:space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto min-w-0">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3 sm:pb-4">
+              <h3 className="font-bold text-slate-900 dark:text-white text-base sm:text-lg">Assessment Details</h3>
+              <button onClick={() => setSelectedDetail(null)} className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs">
               <div>
                 <span className="text-slate-400 uppercase font-bold">Assessment ID</span>
-                <p className="font-mono text-sm font-semibold text-slate-800 dark:text-slate-200 mt-1">{selectedDetail.prediction_id}</p>
+                <p className="font-mono text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mt-1 break-all">{selectedDetail.prediction_id}</p>
               </div>
               <div>
                 <span className="text-slate-400 uppercase font-bold">Default Probability</span>
-                <p className="text-xl font-bold text-slate-900 dark:text-white mt-1">{selectedDetail.default_probability_pct}</p>
+                <p className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mt-1">{selectedDetail.default_probability_pct}</p>
               </div>
               <div>
                 <span className="text-slate-400 uppercase font-bold">Risk Category</span>
@@ -208,12 +208,12 @@ export const AssessmentHistory: React.FC = () => {
             {/* NVIDIA AI Explainability in Detail Modal */}
             {(selectedDetail.ai_summary || selectedDetail.ai_explanation) && (
               <div className="border-t border-slate-100 dark:border-slate-700 pt-4 space-y-3">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                   <div className="flex items-center gap-2">
                     <Cpu className="w-4 h-4 text-brand-500" />
                     <h4 className="font-bold text-slate-900 dark:text-white text-sm">NVIDIA AI Underwriting Brief</h4>
                   </div>
-                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300">
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 self-start sm:self-auto">
                     {selectedDetail.ai_model || 'meta/llama-3.1-70b-instruct'}
                   </span>
                 </div>
@@ -247,16 +247,16 @@ export const AssessmentHistory: React.FC = () => {
 
             <div className="border-t border-slate-100 dark:border-slate-700 pt-4">
               <h4 className="font-bold text-slate-900 dark:text-white text-sm mb-2">Submitted Features</h4>
-              <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-xl text-xs font-mono max-h-48 overflow-y-auto">
-                <pre>{JSON.stringify(selectedDetail.applicant_features, null, 2)}</pre>
+              <div className="bg-slate-50 dark:bg-slate-900 p-3 sm:p-4 rounded-xl text-xs font-mono max-h-48 overflow-y-auto">
+                <pre className="whitespace-pre-wrap break-all">{JSON.stringify(selectedDetail.applicant_features, null, 2)}</pre>
               </div>
             </div>
 
-            <div className="flex justify-between items-center pt-2">
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-between items-stretch sm:items-center gap-2 pt-2">
               <button
                 onClick={() => handleDownload(selectedDetail.prediction_id)}
                 disabled={downloadingId === selectedDetail.prediction_id}
-                className="flex items-center gap-2 px-4 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 dark:hover:bg-indigo-900/50 border border-indigo-200 dark:border-indigo-800 text-xs font-semibold rounded-xl transition shadow-xs disabled:opacity-50"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 dark:hover:bg-indigo-900/50 border border-indigo-200 dark:border-indigo-800 text-xs font-semibold rounded-xl transition shadow-xs disabled:opacity-50"
               >
                 <FileDown className="w-4 h-4" />
                 <span>{downloadingId === selectedDetail.prediction_id ? 'Generating...' : 'Download Assessment Report'}</span>

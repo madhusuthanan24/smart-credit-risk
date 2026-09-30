@@ -188,24 +188,24 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Top Executive Header & Filter Controls */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
         <div>
-          <div className="flex items-center gap-2.5">
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Executive Risk Dashboard</h2>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Executive Risk Dashboard</h2>
             <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-brand-50 text-brand-700 dark:bg-brand-950/60 dark:text-brand-300 border border-brand-200/50 dark:border-brand-800/50">
               {role === 'ADMIN' ? 'Executive Oversight' : role === 'CREDIT_OFFICER' ? 'Underwriting Ops' : 'Read-Only Portal'}
             </span>
           </div>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
             Real-time portfolio intelligence, calibrated ML risk decisions, and system health status.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           {/* Time Horizon Filters */}
-          <div className="flex items-center bg-slate-100 dark:bg-slate-900/80 p-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold">
+          <div className="flex flex-wrap items-center bg-slate-100 dark:bg-slate-900/80 p-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold">
             {(
               [
                 { label: '7 Days', value: '7' },
@@ -217,7 +217,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
               <button
                 key={filter.value}
                 onClick={() => setTimeFilter(filter.value)}
-                className={`px-3 py-1.5 rounded-lg transition-all ${
+                className={`px-2.5 sm:px-3 py-1.5 rounded-lg transition-all ${
                   timeFilter === filter.value
                     ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs'
                     : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
@@ -232,7 +232,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
           {role !== 'VIEWER' ? (
             <button
               onClick={() => setActiveTab('new-assessment')}
-              className="flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-xl transition-all shadow-md shadow-brand-500/20 text-xs"
+              className="flex items-center gap-2 px-3.5 sm:px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-xl transition-all shadow-md shadow-brand-500/20 text-xs"
             >
               <span>Run New Assessment</span>
               <ArrowRight className="w-4 h-4" />
@@ -247,9 +247,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
       </div>
 
       {/* 8 Primary Dashboard KPI Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5">
         {/* 1. Total Assessments */}
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+        <div className="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
           <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-3">
             <span className="text-xs font-bold uppercase tracking-wider">Total Assessments</span>
             <div className="p-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg">
@@ -379,13 +379,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
       </div>
 
       {/* Live System Health Panel */}
-      <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-2">
-            <Activity className="w-5 h-5 text-brand-500" />
+            <Activity className="w-5 h-5 text-brand-500 shrink-0" />
             <h3 className="font-bold text-slate-900 dark:text-white text-base">Live System Health Architecture</h3>
           </div>
-          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
+          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold w-fit ${
             health?.status === 'healthy'
               ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/40'
               : 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800/40'
@@ -395,7 +395,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
           {/* API */}
           <div className="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/60">
             <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-1">
@@ -471,17 +471,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
       </div>
 
       {/* Visual Analytics Grid: Risk Stratification, Prediction & Trends */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* 1. Risk Category Stratification */}
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+        <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs min-w-0">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-bold text-slate-900 dark:text-white text-base">Risk Distribution</h3>
             <span className="text-xs text-slate-500 font-medium">Categorical Stratification</span>
           </div>
-          <div className="h-64">
+          <div className="h-56 sm:h-64 min-w-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={riskPieData} cx="50%" cy="50%" innerRadius={60} outerRadius={85} paddingAngle={5} dataKey="value">
+                <Pie data={riskPieData} cx="50%" cy="50%" innerRadius={55} outerRadius={80} paddingAngle={5} dataKey="value">
                   {riskPieData.map((_, index) => (
                     <Cell key={`risk-cell-${index}`} fill={RISK_COLORS[index % RISK_COLORS.length]} />
                   ))}
@@ -498,7 +498,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex justify-center gap-6 text-xs font-medium text-slate-600 dark:text-slate-400 mt-2">
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 text-xs font-medium text-slate-600 dark:text-slate-400 mt-2">
             <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-emerald-500"></span> Low Risk</span>
             <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-amber-500"></span> Moderate Risk</span>
             <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-rose-500"></span> High Risk</span>
@@ -506,12 +506,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
         </div>
 
         {/* 2. Prediction Distribution */}
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+        <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs min-w-0">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-bold text-slate-900 dark:text-white text-base">Prediction Distribution</h3>
             <span className="text-xs text-slate-500 font-medium">Binary Decision Breakdown</span>
           </div>
-          <div className="h-64">
+          <div className="h-56 sm:h-64 min-w-0">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={predData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.2} />
@@ -534,7 +534,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex justify-center gap-6 text-xs font-medium text-slate-600 dark:text-slate-400 mt-2">
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 text-xs font-medium text-slate-600 dark:text-slate-400 mt-2">
             <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-blue-500"></span> Good Credit (Approved)</span>
             <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-rose-500"></span> Bad Credit (Default Risk)</span>
           </div>
@@ -738,21 +738,21 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
 
       {/* Recent Assessment Table */}
       <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs overflow-hidden">
-        <div className="p-6 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+        <div className="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h3 className="font-bold text-slate-900 dark:text-white text-base">Recent Credit Assessments</h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Live database applicant assessments scored by the ML pipeline</p>
           </div>
           <button
             onClick={() => setActiveTab('history')}
-            className="text-xs font-semibold text-brand-500 hover:text-brand-600 dark:text-brand-400 dark:hover:text-brand-300 flex items-center gap-1"
+            className="text-xs font-semibold text-brand-500 hover:text-brand-600 dark:text-brand-400 dark:hover:text-brand-300 flex items-center gap-1 w-fit"
           >
             <span>View All History</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[640px]">
             <thead>
               <tr className="bg-slate-50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-100 dark:border-slate-700">
                 <th className="py-3.5 px-6">Assessment ID</th>

@@ -161,27 +161,27 @@ export const Monitoring: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-6 sm:space-y-8 pb-12 min-w-0">
       {/* Top Header & Actions */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-400 rounded-xl border border-brand-200 dark:border-brand-800">
+            <div className="p-2 bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-400 rounded-xl border border-brand-200 dark:border-brand-800 flex-shrink-0">
               <Activity className="w-5 h-5" />
             </div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Model Monitoring & Data Drift</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Model Monitoring & Data Drift</h1>
           </div>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
             Real-time inference volume tracking, Population Stability Index (PSI) feature drift analysis, and model health.
           </p>
         </div>
 
         {/* Timeframe Filter Buttons & Refresh */}
-        <div className="flex items-center gap-3">
-          <div className="inline-flex items-center p-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xs text-xs font-semibold text-slate-600 dark:text-slate-300">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <div className="inline-flex flex-wrap items-center p-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xs text-xs font-semibold text-slate-600 dark:text-slate-300">
             <button
               onClick={() => handleFilterChange(undefined)}
-              className={`px-3 py-1.5 rounded-lg transition-colors ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg transition-colors ${
                 daysFilter === undefined
                   ? 'bg-brand-500 text-white shadow-xs'
                   : 'hover:text-slate-900 dark:hover:text-white'
@@ -191,7 +191,7 @@ export const Monitoring: React.FC = () => {
             </button>
             <button
               onClick={() => handleFilterChange(7)}
-              className={`px-3 py-1.5 rounded-lg transition-colors ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg transition-colors ${
                 daysFilter === 7
                   ? 'bg-brand-500 text-white shadow-xs'
                   : 'hover:text-slate-900 dark:hover:text-white'
@@ -201,7 +201,7 @@ export const Monitoring: React.FC = () => {
             </button>
             <button
               onClick={() => handleFilterChange(30)}
-              className={`px-3 py-1.5 rounded-lg transition-colors ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg transition-colors ${
                 daysFilter === 30
                   ? 'bg-brand-500 text-white shadow-xs'
                   : 'hover:text-slate-900 dark:hover:text-white'
@@ -211,7 +211,7 @@ export const Monitoring: React.FC = () => {
             </button>
             <button
               onClick={() => handleFilterChange(90)}
-              className={`px-3 py-1.5 rounded-lg transition-colors ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg transition-colors ${
                 daysFilter === 90
                   ? 'bg-brand-500 text-white shadow-xs'
                   : 'hover:text-slate-900 dark:hover:text-white'
@@ -233,7 +233,7 @@ export const Monitoring: React.FC = () => {
       </div>
 
       {error && (
-        <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 flex items-center justify-between text-rose-700 dark:text-rose-300 text-sm">
+        <div className="p-3.5 sm:p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 flex items-center justify-between text-rose-700 dark:text-rose-300 text-xs sm:text-sm">
           <span>{error}</span>
           <button
             onClick={() => loadData(daysFilter)}
@@ -245,8 +245,8 @@ export const Monitoring: React.FC = () => {
       )}
 
       {/* Volume Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="p-4 sm:p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Today's Volume</span>
             <span className="p-2 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 rounded-xl">
@@ -254,7 +254,7 @@ export const Monitoring: React.FC = () => {
             </span>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-bold text-slate-900 dark:text-white">
+            <span className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
               {isLoading ? '...' : overview?.volume.today ?? 0}
             </span>
             <span className="text-xs text-slate-500 dark:text-slate-400">assessments</span>
@@ -262,7 +262,7 @@ export const Monitoring: React.FC = () => {
           <p className="text-[11px] text-slate-400 mt-2">Predictions evaluated today</p>
         </div>
 
-        <div className="p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs">
+        <div className="p-4 sm:p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Last 7 Days</span>
             <span className="p-2 bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 rounded-xl">
@@ -270,7 +270,7 @@ export const Monitoring: React.FC = () => {
             </span>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-bold text-slate-900 dark:text-white">
+            <span className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
               {isLoading ? '...' : overview?.volume.last_7_days ?? 0}
             </span>
             <span className="text-xs text-slate-500 dark:text-slate-400">assessments</span>
@@ -278,7 +278,7 @@ export const Monitoring: React.FC = () => {
           <p className="text-[11px] text-slate-400 mt-2">Rolling 7-day volume</p>
         </div>
 
-        <div className="p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs">
+        <div className="p-4 sm:p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Last 30 Days</span>
             <span className="p-2 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 rounded-xl">
@@ -286,7 +286,7 @@ export const Monitoring: React.FC = () => {
             </span>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-bold text-slate-900 dark:text-white">
+            <span className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
               {isLoading ? '...' : overview?.volume.last_30_days ?? 0}
             </span>
             <span className="text-xs text-slate-500 dark:text-slate-400">assessments</span>
@@ -294,7 +294,7 @@ export const Monitoring: React.FC = () => {
           <p className="text-[11px] text-slate-400 mt-2">Rolling 30-day volume</p>
         </div>
 
-        <div className="p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs">
+        <div className="p-4 sm:p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">All-Time Total</span>
             <span className="p-2 bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-400 rounded-xl">
@@ -302,7 +302,7 @@ export const Monitoring: React.FC = () => {
             </span>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-bold text-slate-900 dark:text-white">
+            <span className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
               {isLoading ? '...' : overview?.volume.all_time ?? 0}
             </span>
             <span className="text-xs text-slate-500 dark:text-slate-400">lifetime</span>
@@ -312,9 +312,9 @@ export const Monitoring: React.FC = () => {
       </div>
 
       {/* Risk Category Distribution & Threshold Compliance Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 min-w-0">
         {/* Risk Category Distribution */}
-        <div className="p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs">
+        <div className="p-4 sm:p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs min-w-0">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Layers className="w-4 h-4 text-brand-500" />
@@ -386,7 +386,7 @@ export const Monitoring: React.FC = () => {
         </div>
 
         {/* Threshold Monitoring (0.35) */}
-        <div className="p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs">
+        <div className="p-4 sm:p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs min-w-0">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Sliders className="w-4 h-4 text-brand-500" />
@@ -398,7 +398,7 @@ export const Monitoring: React.FC = () => {
           </div>
 
           <div className="space-y-4">
-            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-700/40 border border-slate-100 dark:border-slate-700">
+            <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50 dark:bg-slate-700/40 border border-slate-100 dark:border-slate-700">
               <div className="flex justify-between items-center text-xs">
                 <span className="text-slate-600 dark:text-slate-300 font-medium">Below Cutoff (Approve / Refer)</span>
                 <span className="font-bold text-slate-900 dark:text-white">
@@ -413,7 +413,7 @@ export const Monitoring: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-700/40 border border-slate-100 dark:border-slate-700">
+            <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50 dark:bg-slate-700/40 border border-slate-100 dark:border-slate-700">
               <div className="flex justify-between items-center text-xs">
                 <span className="text-slate-600 dark:text-slate-300 font-medium">At or Above Cutoff (Reject)</span>
                 <span className="font-bold text-slate-900 dark:text-white">
@@ -435,7 +435,7 @@ export const Monitoring: React.FC = () => {
         </div>
 
         {/* Probability Summary Statistics */}
-        <div className="p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs flex flex-col justify-between">
+        <div className="p-4 sm:p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs flex flex-col justify-between min-w-0">
           <div>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -445,31 +445,31 @@ export const Monitoring: React.FC = () => {
               <span className="text-xs text-slate-400">Continuous Metric</span>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-100 dark:border-slate-700 text-center">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+              <div className="p-2.5 sm:p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-100 dark:border-slate-700 text-center">
                 <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium uppercase">Mean</span>
-                <p className="text-lg font-bold text-slate-900 dark:text-white mt-1">
+                <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
                   {overview ? `${(overview.probability_metrics.mean * 100).toFixed(2)}%` : '--'}
                 </p>
               </div>
 
-              <div className="p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-100 dark:border-slate-700 text-center">
+              <div className="p-2.5 sm:p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-100 dark:border-slate-700 text-center">
                 <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium uppercase">Median</span>
-                <p className="text-lg font-bold text-slate-900 dark:text-white mt-1">
+                <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
                   {overview ? `${(overview.probability_metrics.median * 100).toFixed(2)}%` : '--'}
                 </p>
               </div>
 
-              <div className="p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-100 dark:border-slate-700 text-center">
+              <div className="p-2.5 sm:p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-100 dark:border-slate-700 text-center">
                 <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium uppercase">Min</span>
-                <p className="text-lg font-bold text-slate-900 dark:text-white mt-1">
+                <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
                   {overview ? `${(overview.probability_metrics.min * 100).toFixed(2)}%` : '--'}
                 </p>
               </div>
 
-              <div className="p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-100 dark:border-slate-700 text-center">
+              <div className="p-2.5 sm:p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-100 dark:border-slate-700 text-center">
                 <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium uppercase">Max</span>
-                <p className="text-lg font-bold text-slate-900 dark:text-white mt-1">
+                <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
                   {overview ? `${(overview.probability_metrics.max * 100).toFixed(2)}%` : '--'}
                 </p>
               </div>
@@ -487,10 +487,10 @@ export const Monitoring: React.FC = () => {
       </div>
 
       {/* 10-Bucket Probability Distribution Histogram (Recharts) */}
-      <div className="p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
+      <div className="p-4 sm:p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs min-w-0">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
           <div>
-            <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <BarChart2 className="w-5 h-5 text-brand-500" />
               Default Probability Distribution (10 Decile Bins)
             </h3>
@@ -498,7 +498,8 @@ export const Monitoring: React.FC = () => {
               Production distribution across probability intervals. Red line denotes the active decision boundary (0.35).
             </p>
           </div>
-          <div className="flex items-center gap-4 text-xs font-medium">
+
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-medium">
             <span className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
               <span className="w-3 h-3 rounded-xs bg-brand-500 inline-block"></span>
               Prediction Frequency
@@ -510,7 +511,7 @@ export const Monitoring: React.FC = () => {
           </div>
         </div>
 
-        <div className="h-72 w-full">
+        <div className="h-60 sm:h-72 w-full min-w-0">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={overview?.probability_histogram || []}
@@ -552,11 +553,11 @@ export const Monitoring: React.FC = () => {
       </div>
 
       {/* Population Stability Index (PSI) Feature Drift Section */}
-      <div className="p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs space-y-6">
+      <div className="p-4 sm:p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs space-y-5 sm:space-y-6 min-w-0">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
                 Feature Drift Analysis (Population Stability Index - PSI)
               </h3>
               <span className="px-2 py-0.5 text-xs font-semibold rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
@@ -568,14 +569,14 @@ export const Monitoring: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full md:w-auto">
             {/* Search Input */}
             <input
               type="text"
               placeholder="Search features..."
               value={featureSearch}
               onChange={(e) => setFeatureSearch(e.target.value)}
-              className="px-3 py-1.5 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="flex-1 sm:flex-none px-3 py-1.5 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
             />
 
             {/* Feature Type Filter */}
@@ -595,7 +596,7 @@ export const Monitoring: React.FC = () => {
         {getOverallStatusBanner()}
 
         {/* Summary Stats Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 text-center">
           <div className="p-3 bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-100 dark:border-slate-700">
             <span className="text-[11px] text-slate-500 font-medium">Reference Samples</span>
             <p className="text-base font-bold text-slate-900 dark:text-white mt-0.5">{driftData?.reference_count ?? 1000}</p>
@@ -615,8 +616,8 @@ export const Monitoring: React.FC = () => {
         </div>
 
         {/* Feature Drift Table */}
-        <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
-          <table className="w-full text-left text-xs">
+        <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 w-full">
+          <table className="w-full text-left text-xs min-w-[600px]">
             <thead className="bg-slate-50 dark:bg-slate-700/60 text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-700">
               <tr>
                 <th className="py-3 px-4">Feature Name</th>
@@ -663,9 +664,9 @@ export const Monitoring: React.FC = () => {
         </div>
 
         {/* PSI Scale Reference Footer */}
-        <div className="p-4 bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400 space-y-1">
+        <div className="p-3.5 sm:p-4 bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400 space-y-1">
           <div className="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-            <Info className="w-4 h-4 text-brand-500" />
+            <Info className="w-4 h-4 text-brand-500 flex-shrink-0" />
             Population Stability Index (PSI) Standards:
           </div>
           <ul className="list-disc list-inside space-y-0.5 pl-1 text-[11px]">
@@ -677,10 +678,10 @@ export const Monitoring: React.FC = () => {
       </div>
 
       {/* Model Health & Validation Metrics Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 min-w-0">
         {/* Baseline Model Metrics */}
-        <div className="p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="p-4 sm:p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs space-y-4 min-w-0">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-500" />
@@ -695,40 +696,40 @@ export const Monitoring: React.FC = () => {
             </span>
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
-            <div className="p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl text-center border border-slate-100 dark:border-slate-700">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+            <div className="p-2.5 sm:p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl text-center border border-slate-100 dark:border-slate-700">
               <span className="text-[11px] text-slate-400 uppercase font-semibold">ROC-AUC</span>
-              <p className="text-lg font-bold text-slate-900 dark:text-white mt-1">
+              <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
                 {performance?.baseline_metrics.roc_auc ?? 0.8095}
               </p>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl text-center border border-slate-100 dark:border-slate-700">
+            <div className="p-2.5 sm:p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl text-center border border-slate-100 dark:border-slate-700">
               <span className="text-[11px] text-slate-400 uppercase font-semibold">PR-AUC</span>
-              <p className="text-lg font-bold text-slate-900 dark:text-white mt-1">
+              <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
                 {performance?.baseline_metrics.pr_auc ?? 0.6584}
               </p>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl text-center border border-slate-100 dark:border-slate-700">
+            <div className="p-2.5 sm:p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl text-center border border-slate-100 dark:border-slate-700">
               <span className="text-[11px] text-slate-400 uppercase font-semibold">Recall @ 0.35</span>
-              <p className="text-lg font-bold text-slate-900 dark:text-white mt-1">
+              <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
                 {performance ? `${(performance.baseline_metrics.recall * 100).toFixed(1)}%` : '76.7%'}
               </p>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl text-center border border-slate-100 dark:border-slate-700">
+            <div className="p-2.5 sm:p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl text-center border border-slate-100 dark:border-slate-700">
               <span className="text-[11px] text-slate-400 uppercase font-semibold">F1-Score</span>
-              <p className="text-lg font-bold text-slate-900 dark:text-white mt-1">
+              <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
                 {performance?.baseline_metrics.f1_score ?? 0.6715}
               </p>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl text-center border border-slate-100 dark:border-slate-700">
+            <div className="p-2.5 sm:p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl text-center border border-slate-100 dark:border-slate-700">
               <span className="text-[11px] text-slate-400 uppercase font-semibold">Brier Score</span>
-              <p className="text-lg font-bold text-slate-900 dark:text-white mt-1">
+              <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
                 {performance?.baseline_metrics.brier_score ?? 0.1546}
               </p>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl text-center border border-slate-100 dark:border-slate-700">
+            <div className="p-2.5 sm:p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl text-center border border-slate-100 dark:border-slate-700">
               <span className="text-[11px] text-slate-400 uppercase font-semibold">Decision Cutoff</span>
-              <p className="text-lg font-bold text-slate-900 dark:text-white mt-1">
+              <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
                 {performance?.baseline_metrics.threshold ?? 0.35}
               </p>
             </div>
@@ -739,9 +740,9 @@ export const Monitoring: React.FC = () => {
         </div>
 
         {/* Production Performance & Outcome Notice */}
-        <div className="p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs space-y-4 flex flex-col justify-between">
+        <div className="p-4 sm:p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs space-y-4 flex flex-col justify-between min-w-0">
           <div>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                   <Activity className="w-4 h-4 text-blue-500" />
@@ -754,7 +755,7 @@ export const Monitoring: React.FC = () => {
               </span>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/30 border border-slate-200 dark:border-slate-700 space-y-2 mt-4">
+            <div className="p-3.5 sm:p-4 rounded-xl bg-slate-50 dark:bg-slate-700/30 border border-slate-200 dark:border-slate-700 space-y-2 mt-4">
               <div className="flex items-center gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300">
                 <Info className="w-4 h-4 text-blue-500 shrink-0" />
                 <span>Outcome Data Maturation Notice</span>
@@ -767,7 +768,7 @@ export const Monitoring: React.FC = () => {
           </div>
 
           {/* Educational Distinction Banner */}
-          <div className="p-3.5 rounded-xl bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800 text-[11px] text-purple-800 dark:text-purple-300 leading-relaxed">
+          <div className="p-3 sm:p-3.5 rounded-xl bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800 text-[11px] text-purple-800 dark:text-purple-300 leading-relaxed">
             <strong className="font-semibold block mb-0.5">Monitoring Distinction:</strong>
             {performance?.model_health.explanation ||
               'Data drift reflects shifts in applicant input distributions (observable at origination). Model performance degradation reflects prediction accuracy decay (observable only after loan default/repayment maturation).'}

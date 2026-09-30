@@ -165,21 +165,21 @@ export const NewAssessment: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
       {/* Page Title */}
       <div>
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">New Credit Assessment</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">New Credit Assessment</h2>
+        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
           Complete the multi-step origination disclosure form to generate real ML risk predictions.
         </p>
       </div>
 
       {/* Progress Bar */}
       {step <= 3 && (
-        <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
-          <div className="flex items-center justify-between text-xs font-semibold text-slate-500 mb-2">
-            <span className={step >= 1 ? 'text-brand-600 font-bold' : ''}>1. Personal Info</span>
-            <span className={step >= 2 ? 'text-brand-600 font-bold' : ''}>2. Financial Info</span>
+        <div className="bg-white dark:bg-slate-800 p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+          <div className="flex items-center justify-between text-[11px] sm:text-xs font-semibold text-slate-500 mb-2">
+            <span className={step >= 1 ? 'text-brand-600 font-bold' : ''}>1. Personal</span>
+            <span className={step >= 2 ? 'text-brand-600 font-bold' : ''}>2. Financial</span>
             <span className={step >= 3 ? 'text-brand-600 font-bold' : ''}>3. Loan & History</span>
           </div>
           <div className="w-full h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
@@ -200,12 +200,12 @@ export const NewAssessment: React.FC = () => {
 
       {/* STEP 1: PERSONAL INFORMATION */}
       {step === 1 && (
-        <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-6">
-          <h3 className="font-bold text-slate-900 dark:text-white text-lg border-b border-slate-100 dark:border-slate-700 pb-3">
+        <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 md:p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-6">
+          <h3 className="font-bold text-slate-900 dark:text-white text-base sm:text-lg border-b border-slate-100 dark:border-slate-700 pb-3">
             Step 1: Personal Information
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-2">
                 Age in Years
@@ -300,7 +300,7 @@ export const NewAssessment: React.FC = () => {
             <button
               type="button"
               onClick={() => setStep(2)}
-              className="flex items-center gap-2 px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition-all shadow-md shadow-brand-500/20"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition-all shadow-md shadow-brand-500/20"
             >
               <span>Next: Financial Info</span>
               <ArrowRight className="w-4 h-4" />
@@ -311,12 +311,12 @@ export const NewAssessment: React.FC = () => {
 
       {/* STEP 2: FINANCIAL INFORMATION */}
       {step === 2 && (
-        <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-6">
-          <h3 className="font-bold text-slate-900 dark:text-white text-lg border-b border-slate-100 dark:border-slate-700 pb-3">
+        <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 md:p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-6">
+          <h3 className="font-bold text-slate-900 dark:text-white text-base sm:text-lg border-b border-slate-100 dark:border-slate-700 pb-3">
             Step 2: Financial Accounts & Assets
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-2">
                 Checking Account Status
@@ -406,11 +406,11 @@ export const NewAssessment: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex justify-between pt-4">
+          <div className="flex flex-col-reverse sm:flex-row justify-between gap-3 pt-4">
             <button
               type="button"
               onClick={() => setStep(1)}
-              className="flex items-center gap-2 px-6 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold text-sm rounded-xl transition-all"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold text-sm rounded-xl transition-all"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back</span>
@@ -418,7 +418,7 @@ export const NewAssessment: React.FC = () => {
             <button
               type="button"
               onClick={() => setStep(3)}
-              className="flex items-center gap-2 px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition-all shadow-md shadow-brand-500/20"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition-all shadow-md shadow-brand-500/20"
             >
               <span>Next: Loan & History</span>
               <ArrowRight className="w-4 h-4" />
@@ -429,12 +429,12 @@ export const NewAssessment: React.FC = () => {
 
       {/* STEP 3: LOAN & CREDIT HISTORY */}
       {step === 3 && (
-        <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-6">
-          <h3 className="font-bold text-slate-900 dark:text-white text-lg border-b border-slate-100 dark:border-slate-700 pb-3">
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-800 p-4 sm:p-6 md:p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-6">
+          <h3 className="font-bold text-slate-900 dark:text-white text-base sm:text-lg border-b border-slate-100 dark:border-slate-700 pb-3">
             Step 3: Loan Request & Credit History
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-2">
                 Credit Amount Requested (DM)
@@ -525,11 +525,11 @@ export const NewAssessment: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex justify-between pt-4">
+          <div className="flex flex-col-reverse sm:flex-row justify-between gap-3 pt-4">
             <button
               type="button"
               onClick={() => setStep(2)}
-              className="flex items-center gap-2 px-6 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold text-sm rounded-xl transition-all"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold text-sm rounded-xl transition-all"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back</span>
@@ -537,7 +537,7 @@ export const NewAssessment: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 px-8 py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-brand-500/30 disabled:opacity-50"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-brand-500/30 disabled:opacity-50"
             >
               {loading ? (
                 <>
@@ -558,13 +558,13 @@ export const NewAssessment: React.FC = () => {
       {/* STEP 4: PREDICTION RESULT CARD */}
       {step === 4 && result && (
         <div className="space-y-6">
-          <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-4">
+          <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 md:p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-700 pb-4">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Prediction Output</span>
                 <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">Credit Risk Assessment Result</h3>
               </div>
-              <span className={`px-4 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-wider ${
+              <span className={`px-4 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-wider w-fit ${
                 result.risk_category === 'LOW RISK'
                   ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300'
                   : result.risk_category === 'MODERATE RISK'
@@ -575,10 +575,10 @@ export const NewAssessment: React.FC = () => {
               </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-center">
               <ProbabilityGauge probability={result.default_probability} threshold={result.decision_threshold} />
               
-              <div className="space-y-4 bg-slate-50 dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-200/60 dark:border-slate-700">
+              <div className="space-y-4 bg-slate-50 dark:bg-slate-900/50 p-4 sm:p-6 rounded-2xl border border-slate-200/60 dark:border-slate-700">
                 <div>
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Model Recommendation</span>
                   <p className="text-2xl font-black text-slate-900 dark:text-white mt-0.5">{result.credit_decision}</p>
@@ -630,18 +630,18 @@ export const NewAssessment: React.FC = () => {
 
             {/* NVIDIA AI Explainability & Risk Insights Card */}
             {(result.ai_explanation || result.ai_summary) && (
-              <div className="bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 text-white p-7 rounded-2xl border border-slate-700/80 shadow-xl space-y-6 relative overflow-hidden">
+              <div className="bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 text-white p-4 sm:p-7 rounded-2xl border border-slate-700/80 shadow-xl space-y-5 sm:space-y-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
 
                 {/* Header */}
-                <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4 relative z-10">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4 relative z-10">
                   <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-brand-500/20 text-brand-400 rounded-xl border border-brand-500/30">
+                    <div className="p-2.5 bg-brand-500/20 text-brand-400 rounded-xl border border-brand-500/30 shrink-0">
                       <Cpu className="w-5 h-5" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h4 className="font-extrabold text-lg text-white">NVIDIA AI Insights</h4>
+                        <h4 className="font-extrabold text-base sm:text-lg text-white">NVIDIA AI Insights</h4>
                         <span className={`px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase rounded-full ${
                           result.ai_provider === 'NVIDIA AI'
                             ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
@@ -659,7 +659,7 @@ export const NewAssessment: React.FC = () => {
 
                   <button
                     onClick={handleCopyAI}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg border border-slate-700 transition-all"
+                    className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg border border-slate-700 transition-all"
                     title="Copy AI analysis to clipboard"
                   >
                     {copiedAI ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -674,7 +674,7 @@ export const NewAssessment: React.FC = () => {
                       <Sparkles className="w-4 h-4" />
                       <span>Assessment Summary</span>
                     </div>
-                    <div className="p-4 bg-slate-800/80 rounded-xl border border-slate-700/60 text-slate-200 text-sm leading-relaxed">
+                    <div className="p-3.5 sm:p-4 bg-slate-800/80 rounded-xl border border-slate-700/60 text-slate-200 text-xs sm:text-sm leading-relaxed">
                       {result.ai_summary}
                     </div>
                   </div>
@@ -687,7 +687,7 @@ export const NewAssessment: React.FC = () => {
                       <ShieldCheck className="w-4 h-4 text-brand-400" />
                       <span>Model Explanation (Why the model reached this result)</span>
                     </div>
-                    <div className="p-4 bg-slate-800/40 rounded-xl border border-slate-800 text-slate-300 text-sm leading-relaxed">
+                    <div className="p-3.5 sm:p-4 bg-slate-800/40 rounded-xl border border-slate-800 text-slate-300 text-xs sm:text-sm leading-relaxed">
                       {result.ai_explanation}
                     </div>
                   </div>
@@ -714,7 +714,7 @@ export const NewAssessment: React.FC = () => {
                   </div>
                 )}
 
-                <div className="text-[11px] text-slate-400 border-t border-slate-800/80 pt-3 flex items-center justify-between relative z-10">
+                <div className="text-[11px] text-slate-400 border-t border-slate-800/80 pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1 relative z-10">
                   <span>Source: <strong className="text-slate-200">{result.ai_provider || 'NVIDIA AI'}</strong></span>
                   <span>ML Engine Calibrated Threshold: 0.35</span>
                 </div>
@@ -725,7 +725,7 @@ export const NewAssessment: React.FC = () => {
               📌 <strong>Disclaimer</strong>: {result.disclaimer}
             </div>
 
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-2">
               <div className="flex items-center gap-2 w-full sm:w-auto">
                 <button
                   type="button"
@@ -741,7 +741,7 @@ export const NewAssessment: React.FC = () => {
                     }
                   }}
                   disabled={downloadingReport}
-                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 dark:hover:bg-indigo-900/50 border border-indigo-200 dark:border-indigo-800 text-sm font-semibold rounded-xl transition shadow-xs disabled:opacity-50"
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 sm:px-5 py-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 dark:hover:bg-indigo-900/50 border border-indigo-200 dark:border-indigo-800 text-xs sm:text-sm font-semibold rounded-xl transition shadow-xs disabled:opacity-50"
                 >
                   <FileDown className="w-4 h-4" />
                   <span>{downloadingReport ? 'Generating PDF...' : 'Download Assessment Report'}</span>
@@ -756,7 +756,7 @@ export const NewAssessment: React.FC = () => {
                       alert(e.message || 'Report preview failed');
                     }
                   }}
-                  className="flex items-center justify-center p-3 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-xl transition"
+                  className="flex items-center justify-center p-3 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-xl transition shrink-0"
                   title="Preview PDF Report in New Tab"
                 >
                   <Eye className="w-4 h-4" />

@@ -3,23 +3,23 @@ import { Settings as SettingsIcon, Sliders, Shield, Database, Bell } from 'lucid
 
 export const Settings: React.FC = () => {
   return (
-    <div className="space-y-8 max-w-4xl">
+    <div className="space-y-6 sm:space-y-8 max-w-4xl min-w-0">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Platform Settings</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Configure underwriting thresholds, API integration, and user notification rules.</p>
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Platform Settings</h2>
+        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Configure underwriting thresholds, API integration, and user notification rules.</p>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-6">
-        <h3 className="font-bold text-slate-900 dark:text-white text-base border-b border-slate-100 dark:border-slate-700 pb-3 flex items-center gap-2">
-          <Sliders className="w-5 h-5 text-brand-500" />
+      <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-6 min-w-0">
+        <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base border-b border-slate-100 dark:border-slate-700 pb-3 flex items-center gap-2">
+          <Sliders className="w-5 h-5 text-brand-500 shrink-0" />
           <span>Decision Cutoff Policy Configuration</span>
         </h3>
         
-        <div className="space-y-4 text-sm">
+        <div className="space-y-4 text-xs sm:text-sm">
           <div>
             <label className="block font-semibold text-slate-700 dark:text-slate-200 mb-1">Production Decision Threshold Cutoff</label>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Default decision cutoff loaded from <code>models/threshold_config.json</code> (0.35 = 35%).</p>
-            <input type="number" step="0.05" min="0.10" max="0.70" defaultValue="0.35" className="px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium outline-none w-48" />
+            <input type="number" step="0.05" min="0.10" max="0.70" defaultValue="0.35" className="px-3.5 sm:px-4 py-2 sm:py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-medium outline-none w-full sm:w-48" />
           </div>
           
           <div className="pt-2">
@@ -29,9 +29,9 @@ export const Settings: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-4">
-        <h3 className="font-bold text-slate-900 dark:text-white text-base border-b border-slate-100 dark:border-slate-700 pb-3 flex items-center gap-2">
-          <Shield className="w-5 h-5 text-emerald-500" />
+      <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs space-y-4 min-w-0">
+        <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base border-b border-slate-100 dark:border-slate-700 pb-3 flex items-center gap-2">
+          <Shield className="w-5 h-5 text-emerald-500 shrink-0" />
           <span>Demographic Non-Discrimination Policy</span>
         </h3>
         <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">

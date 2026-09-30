@@ -49,17 +49,17 @@ export const Login: React.FC<LoginProps> = ({ initialMode = 'viewer-login' }) =>
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden transition-all duration-300">
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-3 sm:p-4">
+      <div className="w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden transition-all duration-300">
         
         {/* Header Branding with 5-tap logo detector */}
-        <div className="bg-gradient-to-br from-brand-600 via-indigo-700 to-slate-900 p-8 text-white text-center relative select-none">
+        <div className="bg-gradient-to-br from-brand-600 via-indigo-700 to-slate-900 p-6 sm:p-8 text-white text-center relative select-none">
           
           {/* Top secret staff unlock badge */}
           {staffUnlocked && (
             <button
               onClick={() => setViewMode('staff-select')}
-              className="absolute top-4 right-4 px-2.5 py-1 bg-amber-400/20 backdrop-blur-md border border-amber-300/40 rounded-full text-[11px] font-semibold text-amber-200 flex items-center gap-1 hover:bg-amber-400/30 transition-all cursor-pointer"
+              className="absolute top-3 right-3 sm:top-4 sm:right-4 px-2.5 py-1 bg-amber-400/20 backdrop-blur-md border border-amber-300/40 rounded-full text-[10px] sm:text-[11px] font-semibold text-amber-200 flex items-center gap-1 hover:bg-amber-400/30 transition-all cursor-pointer"
             >
               <Sparkles className="w-3 h-3 text-amber-300 animate-pulse" />
               <span>Staff Portal</span>
@@ -71,12 +71,12 @@ export const Login: React.FC<LoginProps> = ({ initialMode = 'viewer-login' }) =>
             type="button"
             onClick={handleLogoTap}
             title="Smart Risk Engine Logo"
-            className="w-14 h-14 bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/20 shadow-inner transition-all cursor-pointer"
+            className="w-12 h-12 sm:w-14 sm:h-14 bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 border border-white/20 shadow-inner transition-all cursor-pointer"
           >
-            <CreditCard className="w-8 h-8 text-white" />
+            <CreditCard className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
           </button>
 
-          <h2 className="text-2xl font-bold tracking-tight">Smart Risk Engine</h2>
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Smart Risk Engine</h2>
           <p className="text-brand-100 text-xs mt-1 font-medium">Enterprise Credit Risk Platform</p>
 
           {/* Toast feedback when 5-tap gesture unlocks staff portal */}
@@ -89,7 +89,7 @@ export const Login: React.FC<LoginProps> = ({ initialMode = 'viewer-login' }) =>
         </div>
 
         {/* Dynamic Auth Body */}
-        <div className="p-8">
+        <div className="p-5 sm:p-8">
           {viewMode === 'viewer-login' && (
             <ViewerLogin
               onSwitchToRegister={() => setViewMode('viewer-register')}
