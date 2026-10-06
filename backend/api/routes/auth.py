@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 from backend.database.database import get_db
@@ -73,14 +74,50 @@ def register_user(user_in: UserRegister, db: Session = Depends(get_db)):
     }
 
 @router.post("/auth/login", response_model=TokenResponse, summary="User authentication login", dependencies=[Depends(limit_login_attempts)])
-def login_user(user_in: UserLogin, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == user_in.email).first()
-    if not user or not verify_password(user_in.password, user.password_hash):
+async def login_user(
+    request: Request,
+    user_in: Optional[UserLogin] = None,
+    db: Session = Depends(get_db)
+):
+    content_type = request.headers.get("content-type", "")
+    email = None
+    password = None
+    portal = None
+
+    if "application/x-www-form-urlencoded" in content_type or "multipart/form-data" in content_type:
+        form = await request.form()
+        email = form.get("username") or form.get("email")
+        password = form.get("password")
+        portal = form.get("portal")
+    elif user_in is not None:
+        email = user_in.email
+        password = user_in.password
+        portal = user_in.portal
+    else:
+        try:
+            body = await request.json()
+            email = body.get("email") or body.get("username")
+            password = body.get("password")
+            portal = body.get("portal")
+        except Exception:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid request body. Expected JSON or form-encoded credentials."
+            )
+
+    if not email or not password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email/username and password are required."
+        )
+
+    user = db.query(User).filter(User.email == str(email).strip()).first()
+    if not user or not verify_password(str(password), user.password_hash):
         audit = AuditLog(
             action="LOGIN_FAILURE",
             status="FAILURE",
             threshold=0.35,
-            details=f"Failed login attempt for email: {user_in.email}"
+            details=f"Failed login attempt for email: {email}"
         )
         db.add(audit)
         db.commit()
@@ -89,14 +126,14 @@ def login_user(user_in: UserLogin, db: Session = Depends(get_db)):
             detail="Invalid email or password"
         )
 
-    if hasattr(user, "is_active") and not user.is_active:
+    if hasattr(user, "is_active") and user.is_active is False:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Account is disabled"
         )
 
-    if user_in.portal:
-        portal_name = user_in.portal.strip().upper()
+    if portal:
+        portal_name = str(portal).strip().upper()
         if portal_name == "ADMIN" and user.role != "ADMIN":
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,

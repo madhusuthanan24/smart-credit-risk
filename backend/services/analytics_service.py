@@ -63,8 +63,8 @@ def get_dashboard_summary(db: Session, days: Optional[int] = None) -> dict:
     avg_credit = credit_q.scalar() or 0.0
     avg_duration = dur_q.scalar() or 0.0
 
-    today_str = date.today().isoformat()
-    today_count = db.query(func.count(Assessment.id)).filter(func.date(Assessment.created_at) == today_str).scalar() or 0
+    today_start = datetime.combine(date.today(), datetime.min.time())
+    today_count = db.query(func.count(Assessment.id)).filter(Assessment.created_at >= today_start).scalar() or 0
 
     approval_rate = (good_credit_count / total) if total > 0 else 0.0
     bad_credit_rate = (bad_credit_count / total) if total > 0 else 0.0
@@ -145,8 +145,8 @@ def get_portfolio_kpis(
 
     total = query.count()
 
-    today_str = date.today().isoformat()
-    today_count = db.query(func.count(Assessment.id)).filter(func.date(Assessment.created_at) == today_str).scalar() or 0
+    today_start = datetime.combine(date.today(), datetime.min.time())
+    today_count = db.query(func.count(Assessment.id)).filter(Assessment.created_at >= today_start).scalar() or 0
     last_7d_count = db.query(func.count(Assessment.id)).filter(Assessment.created_at >= now - timedelta(days=7)).scalar() or 0
     last_30d_count = db.query(func.count(Assessment.id)).filter(Assessment.created_at >= now - timedelta(days=30)).scalar() or 0
 

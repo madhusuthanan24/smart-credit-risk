@@ -75,7 +75,7 @@ def get_current_user(
     if user is None:
         raise credentials_exception
 
-    if hasattr(user, "is_active") and not user.is_active:
+    if hasattr(user, "is_active") and user.is_active is False:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Inactive user account"

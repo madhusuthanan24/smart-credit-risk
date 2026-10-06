@@ -9,6 +9,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from fastapi import FastAPI, Request, Response, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from sqlalchemy.orm import Session
@@ -22,6 +23,31 @@ logger = logging.getLogger("smart_credit_risk")
 
 # Create database tables automatically on startup
 Base.metadata.create_all(bind=engine)
+
+def seed_default_admin():
+    """Ensure at least one admin account exists on startup for fresh database deployments."""
+    try:
+        from backend.database.database import SessionLocal
+        from backend.database.models import User
+        from backend.core.security import get_password_hash
+        db = SessionLocal()
+        admin_user = db.query(User).filter(User.role == "ADMIN").first()
+        if not admin_user:
+            logger.info("No ADMIN account detected in database. Seeding initial admin...")
+            default_admin = User(
+                email="admin@bank.com",
+                password_hash=get_password_hash("AdminPassword123!"),
+                role="ADMIN",
+                is_active=True
+            )
+            db.add(default_admin)
+            db.commit()
+            logger.info("Seeded initial admin account: admin@bank.com")
+        db.close()
+    except Exception as e:
+        logger.warning(f"Startup admin check skipped: {e}")
+
+seed_default_admin()
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -83,7 +109,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         content={
             "detail": "Request validation error.",
             "error_code": "VALIDATION_ERROR",
-            "errors": exc.errors(),
+            "errors": jsonable_encoder(exc.errors()),
             "request_id": request_id,
         },
     )
