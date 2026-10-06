@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, PlusCircle, History, BarChart3, Cpu, ShieldCheck, Shield, Settings as SettingsIcon, CreditCard, Users, SlidersHorizontal, Activity, Scale, X } from 'lucide-react';
+import { LayoutDashboard, PlusCircle, History, BarChart3, Cpu, ShieldCheck, Shield, Settings as SettingsIcon, CreditCard, Users, SlidersHorizontal, Activity, Scale, X, Compass } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 interface SidebarProps {
@@ -21,6 +21,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isOpe
     { id: 'monitoring', label: 'Model Monitoring', icon: Activity, roles: ['ADMIN', 'CREDIT_OFFICER', 'VIEWER'] },
     { id: 'governance', label: 'Fairness & Governance', icon: Scale, roles: ['ADMIN', 'CREDIT_OFFICER', 'VIEWER'] },
     { id: 'model-info', label: 'Model Information', icon: Cpu, roles: ['ADMIN', 'CREDIT_OFFICER', 'VIEWER'] },
+    { id: 'landing', label: 'Public Landing Page', icon: Compass, roles: ['ADMIN', 'CREDIT_OFFICER', 'VIEWER'] },
     { id: 'admin-center', label: 'Admin Control Center', icon: Shield, roles: ['ADMIN'] },
     { id: 'audit', label: 'System Audit', icon: ShieldCheck, roles: ['ADMIN'] },
     { id: 'users', label: 'User Management', icon: Users, roles: ['ADMIN'] },

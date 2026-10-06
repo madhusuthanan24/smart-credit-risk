@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { CreditCard, ShieldCheck, Sparkles, Lock, CheckCircle2 } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { CreditCard, ShieldCheck, Sparkles, Lock, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { ViewerLogin } from './auth/ViewerLogin';
 import { ViewerRegister } from './auth/ViewerRegister';
 import { StaffAccess } from './auth/StaffAccess';
@@ -19,13 +19,18 @@ type AuthViewMode =
 
 interface LoginProps {
   initialMode?: AuthViewMode;
+  onBackToLanding?: () => void;
 }
 
-export const Login: React.FC<LoginProps> = ({ initialMode = 'viewer-login' }) => {
+export const Login: React.FC<LoginProps> = ({ initialMode = 'viewer-login', onBackToLanding }) => {
   const [viewMode, setViewMode] = useState<AuthViewMode>(initialMode);
   const [staffUnlocked, setStaffUnlocked] = useState(false);
   const [showGestureFeedback, setShowGestureFeedback] = useState(false);
-  
+
+  useEffect(() => {
+    setViewMode(initialMode);
+  }, [initialMode]);
+
   // 5-tap gesture state tracking
   const tapTimesRef = useRef<number[]>([]);
 
@@ -49,7 +54,19 @@ export const Login: React.FC<LoginProps> = ({ initialMode = 'viewer-login' }) =>
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-3 sm:p-4">
+    <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-3 sm:p-4">
+      {onBackToLanding && (
+        <div className="w-full max-w-md mb-3 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={onBackToLanding}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors px-2 py-1 rounded-lg hover:bg-slate-800/80 cursor-pointer"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back to Landing Page</span>
+          </button>
+        </div>
+      )}
       <div className="w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden transition-all duration-300">
         
         {/* Header Branding with 5-tap logo detector */}

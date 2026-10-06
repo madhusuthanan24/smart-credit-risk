@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Login } from './pages/Login';
+import { LandingPage } from './pages/LandingPage';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { Dashboard } from './pages/Dashboard';
@@ -22,6 +23,29 @@ const MainLayout: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [darkMode, setDarkMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Unauthenticated routing state
+  const [unauthView, setUnauthView] = useState<'landing' | 'login' | 'register'>(() => {
+    const hash = window.location.hash;
+    if (hash === '#login') return 'login';
+    if (hash === '#register') return 'register';
+    return 'landing';
+  });
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash === '#login') {
+        setUnauthView('login');
+      } else if (hash === '#register') {
+        setUnauthView('register');
+      } else if (!isAuthenticated) {
+        setUnauthView('landing');
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (darkMode) {
@@ -48,8 +72,45 @@ const MainLayout: React.FC = () => {
     );
   }
 
+  // Unauthenticated Navigation Flow
   if (!isAuthenticated) {
-    return <Login />;
+    if (unauthView === 'landing') {
+      return (
+        <LandingPage
+          onLogin={() => {
+            setUnauthView('login');
+            window.location.hash = '#login';
+          }}
+          onRegister={() => {
+            setUnauthView('register');
+            window.location.hash = '#register';
+          }}
+          isAuthenticated={false}
+        />
+      );
+    }
+
+    return (
+      <Login
+        initialMode={unauthView === 'register' ? 'viewer-register' : 'viewer-login'}
+        onBackToLanding={() => {
+          setUnauthView('landing');
+          window.location.hash = '';
+        }}
+      />
+    );
+  }
+
+  // Authenticated full-page view for Public Landing Page
+  if (activeTab === 'landing') {
+    return (
+      <LandingPage
+        onLogin={() => handleTabChange('dashboard')}
+        onRegister={() => handleTabChange('dashboard')}
+        onGoToDashboard={() => handleTabChange('dashboard')}
+        isAuthenticated={true}
+      />
+    );
   }
 
   // Permission Checks per tab
