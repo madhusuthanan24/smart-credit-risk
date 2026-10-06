@@ -51,14 +51,27 @@ export const Monitoring: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const [ovRes, driftRes, perfRes] = await Promise.all([
+      const [ovRes, driftRes, perfRes] = await Promise.allSettled([
         fetchMonitoringOverview(days),
         fetchDataDrift(days),
         fetchModelPerformance()
       ]);
-      setOverview(ovRes);
-      setDriftData(driftRes);
-      setPerformance(perfRes);
+
+      if (ovRes.status === 'fulfilled') {
+        setOverview(ovRes.value);
+      }
+      if (driftRes.status === 'fulfilled') {
+        setDriftData(driftRes.value);
+      }
+      if (perfRes.status === 'fulfilled') {
+        setPerformance(perfRes.value);
+      }
+
+      if (ovRes.status === 'rejected' && driftRes.status === 'rejected' && perfRes.status === 'rejected') {
+        setError(ovRes.reason?.message || 'Failed to load monitoring metrics.');
+      } else if (ovRes.status === 'rejected') {
+        setError(ovRes.reason?.message || 'Failed to load monitoring overview.');
+      }
     } catch (err: any) {
       setError(err?.message || 'Failed to load monitoring metrics.');
     } finally {
@@ -449,28 +462,28 @@ export const Monitoring: React.FC = () => {
               <div className="p-2.5 sm:p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-100 dark:border-slate-700 text-center">
                 <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium uppercase">Mean</span>
                 <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
-                  {overview ? `${(overview.probability_metrics.mean * 100).toFixed(2)}%` : '--'}
+                  {overview && overview.risk_distribution.total > 0 ? `${(overview.probability_metrics.mean * 100).toFixed(2)}%` : '--'}
                 </p>
               </div>
 
               <div className="p-2.5 sm:p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-100 dark:border-slate-700 text-center">
                 <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium uppercase">Median</span>
                 <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
-                  {overview ? `${(overview.probability_metrics.median * 100).toFixed(2)}%` : '--'}
+                  {overview && overview.risk_distribution.total > 0 ? `${(overview.probability_metrics.median * 100).toFixed(2)}%` : '--'}
                 </p>
               </div>
 
               <div className="p-2.5 sm:p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-100 dark:border-slate-700 text-center">
                 <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium uppercase">Min</span>
                 <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
-                  {overview ? `${(overview.probability_metrics.min * 100).toFixed(2)}%` : '--'}
+                  {overview && overview.risk_distribution.total > 0 ? `${(overview.probability_metrics.min * 100).toFixed(2)}%` : '--'}
                 </p>
               </div>
 
               <div className="p-2.5 sm:p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-100 dark:border-slate-700 text-center">
                 <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium uppercase">Max</span>
                 <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">
-                  {overview ? `${(overview.probability_metrics.max * 100).toFixed(2)}%` : '--'}
+                  {overview && overview.risk_distribution.total > 0 ? `${(overview.probability_metrics.max * 100).toFixed(2)}%` : '--'}
                 </p>
               </div>
             </div>

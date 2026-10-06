@@ -40,7 +40,7 @@ class AdminService:
 
     def get_system_overview(self, db: Session) -> dict:
         now = datetime.utcnow()
-        today_date = date.today().isoformat()
+        today_start = datetime.combine(date.today(), datetime.min.time())
 
         total_users = db.query(func.count(User.id)).scalar() or 0
         active_users = db.query(func.count(User.id)).filter(User.is_active == True).scalar() or 0
@@ -49,7 +49,7 @@ class AdminService:
         viewer_users = db.query(func.count(User.id)).filter(User.role == "VIEWER").scalar() or 0
 
         total_assessments = db.query(func.count(Assessment.id)).scalar() or 0
-        assessments_today = db.query(func.count(Assessment.id)).filter(func.date(Assessment.created_at) == today_date).scalar() or 0
+        assessments_today = db.query(func.count(Assessment.id)).filter(Assessment.created_at >= today_start).scalar() or 0
         assessments_last_7 = db.query(func.count(Assessment.id)).filter(Assessment.created_at >= now - timedelta(days=7)).scalar() or 0
 
         total_audit_events = db.query(func.count(AuditLog.id)).scalar() or 0

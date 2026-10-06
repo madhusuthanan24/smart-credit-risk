@@ -226,7 +226,7 @@ export async function previewAssessmentReport(assessmentId: string): Promise<voi
 
 export async function fetchMonitoringOverview(days?: number): Promise<MonitoringOverviewResponse> {
   const url = days ? `${API_BASE}/monitoring/overview?days=${days}` : `${API_BASE}/monitoring/overview`;
-  const res = await fetch(url, {
+  const res = await safeFetch(url, {
     headers: { ...getAuthHeaders() }
   });
   return handleResponse<MonitoringOverviewResponse>(res, 'Failed to fetch monitoring overview');
@@ -234,14 +234,14 @@ export async function fetchMonitoringOverview(days?: number): Promise<Monitoring
 
 export async function fetchDataDrift(days?: number): Promise<DataDriftResponse> {
   const url = days ? `${API_BASE}/monitoring/drift?days=${days}` : `${API_BASE}/monitoring/drift`;
-  const res = await fetch(url, {
+  const res = await safeFetch(url, {
     headers: { ...getAuthHeaders() }
   });
   return handleResponse<DataDriftResponse>(res, 'Failed to fetch data drift analysis');
 }
 
 export async function fetchModelPerformance(): Promise<ModelPerformanceResponse> {
-  const res = await fetch(`${API_BASE}/monitoring/performance`, {
+  const res = await safeFetch(`${API_BASE}/monitoring/performance`, {
     headers: { ...getAuthHeaders() }
   });
   return handleResponse<ModelPerformanceResponse>(res, 'Failed to fetch model performance');

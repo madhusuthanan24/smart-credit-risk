@@ -74,11 +74,11 @@ class MonitoringService:
 
     def get_monitoring_overview(self, db: Session, days: Optional[int] = None) -> dict:
         now = datetime.utcnow()
-        today_date = date.today().isoformat()
+        today_start = datetime.combine(date.today(), datetime.min.time())
 
         # Volume Metrics across key timeframes
         total_all_time = db.query(func.count(Assessment.id)).scalar() or 0
-        today_count = db.query(func.count(Assessment.id)).filter(func.date(Assessment.created_at) == today_date).scalar() or 0
+        today_count = db.query(func.count(Assessment.id)).filter(Assessment.created_at >= today_start).scalar() or 0
         last_7_days_count = db.query(func.count(Assessment.id)).filter(Assessment.created_at >= now - timedelta(days=7)).scalar() or 0
         last_30_days_count = db.query(func.count(Assessment.id)).filter(Assessment.created_at >= now - timedelta(days=30)).scalar() or 0
 
