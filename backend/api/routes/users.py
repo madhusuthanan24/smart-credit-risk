@@ -22,11 +22,22 @@ def serialize_user(user: User) -> dict:
 def list_users(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
+    search: Optional[str] = Query(None, description="Search by email"),
+    role: Optional[str] = Query(None, description="Filter by role: ADMIN, CREDIT_OFFICER, VIEWER"),
+    is_active: Optional[bool] = Query(None, description="Filter by active status"),
     db: Session = Depends(get_db),
     admin_user: User = Depends(require_role(["ADMIN"]))
 ):
+    query = db.query(User)
+    if search:
+        query = query.filter(User.email.ilike(f"%{search.strip()}%"))
+    if role:
+        query = query.filter(User.role == role.strip().upper())
+    if is_active is not None:
+        query = query.filter(User.is_active == is_active)
+
     offset = (page - 1) * page_size
-    users = db.query(User).order_by(User.created_at.desc()).offset(offset).limit(page_size).all()
+    users = query.order_by(User.created_at.desc()).offset(offset).limit(page_size).all()
     return [serialize_user(u) for u in users]
 
 @router.post("/users", response_model=UserResponse, status_code=status.HTTP_201_CREATED, summary="Create user account (ADMIN only)")
@@ -79,8 +90,15 @@ def update_user_admin(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Safeguard: Prevent removing or disabling the final active ADMIN
-    if user.role == "ADMIN" and (user_update.role != "ADMIN" or user_update.is_active is False):
+    # Safeguard 1: Prevent administrator from demoting or disabling their own account
+    if admin_user.id == user.id and ((user_update.role is not None and user_update.role != "ADMIN") or user_update.is_active is False):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Administrators cannot demote or deactivate their own account."
+        )
+
+    # Safeguard 2: Prevent removing or disabling the final active ADMIN
+    if user.role == "ADMIN" and ((user_update.role is not None and user_update.role != "ADMIN") or user_update.is_active is False):
         admin_count = db.query(User).filter(User.role == "ADMIN", User.is_active == True).count()
         if admin_count <= 1:
             raise HTTPException(
@@ -88,19 +106,25 @@ def update_user_admin(
                 detail="Cannot disable or demote the last remaining active administrative account."
             )
 
+    audit_details = []
     if user_update.role is not None:
         if user_update.role not in ["ADMIN", "CREDIT_OFFICER", "VIEWER"]:
             raise HTTPException(status_code=400, detail="Invalid role specified.")
+        old_role = user.role
         user.role = user_update.role
+        audit_details.append(f"role: {old_role} -> {user.role}")
 
     if user_update.is_active is not None:
+        old_status = user.is_active
         user.is_active = user_update.is_active
+        audit_details.append(f"active: {old_status} -> {user.is_active}")
 
+    action_name = "ADMIN_ROLE_CHANGED" if user_update.role is not None else "USER_UPDATED"
     audit = AuditLog(
-        action="USER_UPDATED",
+        action=action_name,
         status="SUCCESS",
         threshold=0.35,
-        details=f"Admin {admin_user.email} updated user {user.email}: role={user.role}, active={user.is_active}"
+        details=f"Admin {admin_user.email} updated user {user.email}: {', '.join(audit_details) if audit_details else 'no changes'}"
     )
     db.add(audit)
     db.commit()

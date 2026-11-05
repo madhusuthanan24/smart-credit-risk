@@ -11,6 +11,7 @@ interface AuthContextType {
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (credentials: RegisterCredentials) => Promise<void>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<User | null>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,20 +24,34 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  const refreshUser = async (): Promise<User | null> => {
+    const currentToken = token || localStorage.getItem('smart_credit_token');
+    if (!currentToken) return null;
+    try {
+      const freshUser = await getMeApi(currentToken);
+      if (freshUser.is_active === false) {
+        setToken(null);
+        setUser(null);
+        localStorage.removeItem('smart_credit_token');
+        localStorage.removeItem('smart_credit_user');
+        return null;
+      }
+      setUser(freshUser);
+      localStorage.setItem('smart_credit_user', JSON.stringify(freshUser));
+      return freshUser;
+    } catch (e) {
+      setToken(null);
+      setUser(null);
+      localStorage.removeItem('smart_credit_token');
+      localStorage.removeItem('smart_credit_user');
+      return null;
+    }
+  };
+
   useEffect(() => {
     async function verifySession() {
       if (token) {
-        try {
-          const freshUser = await getMeApi(token);
-          setUser(freshUser);
-          localStorage.setItem('smart_credit_user', JSON.stringify(freshUser));
-        } catch (e) {
-          // Token invalid or expired
-          setToken(null);
-          setUser(null);
-          localStorage.removeItem('smart_credit_token');
-          localStorage.removeItem('smart_credit_user');
-        }
+        await refreshUser();
       } else {
         setUser(null);
       }
@@ -93,6 +108,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         login,
         register,
         logout,
+        refreshUser,
       }}
     >
       {children}

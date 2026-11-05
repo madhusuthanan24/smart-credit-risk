@@ -453,17 +453,24 @@ export interface AIGovernanceResponse {
 export interface AdminOverview {
   total_users: number;
   active_users: number;
-  users_by_role: Record<string, number>;
+  users_by_role?: Record<string, number>;
+  admin_users?: number;
+  officer_users?: number;
+  viewer_users?: number;
   total_assessments: number;
   assessments_today: number;
   assessments_last_7_days: number;
   total_audit_events: number;
-  audit_events_today: number;
-  audit_events_last_7_days: number;
+  audit_events_today?: number;
+  audit_events_last_7_days?: number;
   login_success_count: number;
   login_failure_count: number;
-  total_reports_generated: string;
-  total_simulations_run: string;
+  successful_logins?: number;
+  failed_logins?: number;
+  total_reports_generated?: string;
+  reports_generated?: string;
+  total_simulations_run?: string;
+  simulations_performed?: string;
 }
 
 export interface PaginatedUsers {

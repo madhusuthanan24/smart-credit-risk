@@ -1,7 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { fetchDashboardSummary, fetchAnalyticsOverview, fetchHealth } from '../services/api';
-import { DashboardSummary, AnalyticsOverview, HealthStatus } from '../types';
+import {
+  fetchDashboardSummary,
+  fetchAnalyticsOverview,
+  fetchHealth,
+  fetchAdminOverview,
+  downloadAssessmentReport
+} from '../services/api';
+import { DashboardSummary, AnalyticsOverview, HealthStatus, AdminOverview } from '../types';
 import {
   ShieldAlert,
   ShieldCheck,
@@ -23,7 +29,15 @@ import {
   RefreshCw,
   Users,
   BarChart3,
-  HelpCircle
+  HelpCircle,
+  PlusCircle,
+  FileDown,
+  Shield,
+  Eye,
+  SlidersHorizontal,
+  Scale,
+  Sparkles,
+  Info
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -35,10 +49,6 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
   CartesianGrid
 } from 'recharts';
 
@@ -49,13 +59,18 @@ interface DashboardProps {
 type TimeFilter = '7' | '30' | '90' | 'all';
 
 export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
-  const { role } = useAuth();
+  const { role, user } = useAuth();
+  const currentRole = role || 'VIEWER';
+
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('all');
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [analytics, setAnalytics] = useState<AnalyticsOverview | null>(null);
   const [health, setHealth] = useState<HealthStatus | null>(null);
+  const [adminOverview, setAdminOverview] = useState<AdminOverview | null>(null);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   const loadDashboardData = useCallback(async () => {
     setLoading(true);
@@ -65,43 +80,58 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
     try {
       const summaryPromise = fetchDashboardSummary(daysParam);
       const healthPromise = fetchHealth().catch(() => null);
-      
-      // RBAC check: VIEWER role cannot access /analytics/overview
-      const canAccessAnalytics = role === 'ADMIN' || role === 'CREDIT_OFFICER';
-      const analyticsPromise = canAccessAnalytics
-        ? fetchAnalyticsOverview(daysParam).catch(() => null)
-        : Promise.resolve(null);
+      const analyticsPromise = fetchAnalyticsOverview(daysParam).catch(() => null);
+      const adminPromise = currentRole === 'ADMIN' ? fetchAdminOverview().catch(() => null) : Promise.resolve(null);
 
-      const [summaryData, analyticsData, healthData] = await Promise.all([
+      const [summaryData, healthData, analyticsData, adminData] = await Promise.all([
         summaryPromise,
+        healthPromise,
         analyticsPromise,
-        healthPromise
+        adminPromise
       ]);
 
       setSummary(summaryData);
-      setAnalytics(analyticsData);
       if (healthData) setHealth(healthData);
+      setAnalytics(analyticsData);
+      if (adminData) setAdminOverview(adminData);
     } catch (err: any) {
       console.error('Dashboard data load failure:', err);
       setError(err.message || 'Unable to load executive dashboard data.');
     } finally {
       setLoading(false);
     }
-  }, [timeFilter, role]);
+  }, [timeFilter, currentRole]);
 
   useEffect(() => {
     loadDashboardData();
   }, [loadDashboardData]);
 
+  const handleDownloadReport = async (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setDownloadingId(id);
+    try {
+      await downloadAssessmentReport(id);
+    } catch (err: any) {
+      alert(err.message || 'Failed to download assessment report.');
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
   // Color schemes for visualizations
   const RISK_COLORS = ['#10b981', '#f59e0b', '#ef4444'];
   const PRED_COLORS = ['#3b82f6', '#f43f5e'];
 
-  // Risk Distribution Data from live values
+  // Risk Distribution Data
   const riskPieData = summary
     ? [
         { name: 'Low Risk', value: summary.approved_count || 0 },
-        { name: 'Moderate Risk', value: summary.manual_review_count || Math.max(0, summary.total_assessments - summary.approved_count - summary.high_risk_count) },
+        {
+          name: 'Moderate Risk',
+          value:
+            summary.manual_review_count ||
+            Math.max(0, summary.total_assessments - summary.approved_count - summary.high_risk_count)
+        },
         { name: 'High Risk', value: summary.high_risk_count || 0 }
       ]
     : [];
@@ -119,7 +149,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
       ]
     : [];
 
-  // Checking and Savings mappings for readability
+  // Checking and Savings mappings
   const checkingLabels: Record<string, string> = {
     A11: '< 0 DM',
     A12: '0-200 DM',
@@ -165,7 +195,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[450px] gap-3">
         <div className="animate-spin rounded-full h-10 w-10 border-4 border-brand-500/30 border-t-brand-500"></div>
-        <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Loading Executive Dashboard...</p>
+        <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Loading {currentRole} Dashboard...</p>
       </div>
     );
   }
@@ -188,23 +218,52 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
   }
 
   return (
-    <div className="space-y-6 sm:space-y-8">
-      {/* Top Executive Header & Filter Controls */}
+    <div className="space-y-6 sm:space-y-8 min-w-0">
+      {/* 1. ROLE-SPECIFIC DASHBOARD HEADER */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
         <div>
-          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Executive Risk Dashboard</h2>
-            <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-brand-50 text-brand-700 dark:bg-brand-950/60 dark:text-brand-300 border border-brand-200/50 dark:border-brand-800/50">
-              {role === 'ADMIN' ? 'Executive Oversight' : role === 'CREDIT_OFFICER' ? 'Underwriting Ops' : 'Read-Only Portal'}
-            </span>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              {currentRole === 'ADMIN'
+                ? 'Admin Control Dashboard'
+                : currentRole === 'CREDIT_OFFICER'
+                ? 'Credit Underwriting & Risk Operations'
+                : 'Credit Risk Analytics & Portfolio Viewer'}
+            </h2>
+
+            {/* Role Badge */}
+            {currentRole === 'ADMIN' && (
+              <span className="px-3 py-1 text-xs font-bold rounded-full bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300 border border-purple-200 dark:border-purple-800 flex items-center gap-1.5 shadow-xs">
+                <Shield className="w-3.5 h-3.5" />
+                <span>ADMINISTRATOR</span>
+              </span>
+            )}
+            {currentRole === 'CREDIT_OFFICER' && (
+              <span className="px-3 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800 flex items-center gap-1.5 shadow-xs">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>CREDIT OFFICER</span>
+              </span>
+            )}
+            {currentRole === 'VIEWER' && (
+              <span className="px-3 py-1 text-xs font-bold rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 shadow-xs">
+                <Lock className="w-3.5 h-3.5" />
+                <span>VIEWER (READ-ONLY)</span>
+              </span>
+            )}
           </div>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Real-time portfolio intelligence, calibrated ML risk decisions, and system health status.
+
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-3xl">
+            {currentRole === 'ADMIN' &&
+              'Centralized administrative command: monitor platform security, audit logs, user governance, and authoritative ML credit risk metrics.'}
+            {currentRole === 'CREDIT_OFFICER' &&
+              'Operational credit decisioning center: score applicant loan risks, simulate loan restructuring, review calibrated classifications, and generate regulatory PDF reports.'}
+            {currentRole === 'VIEWER' &&
+              'Portfolio oversight portal: inspect aggregated loan risk distributions, Population Stability Index (PSI) drift, algorithmic fairness metrics, and run safe in-memory simulations.'}
           </p>
         </div>
 
+        {/* Time Filters & Role Actions */}
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          {/* Time Horizon Filters */}
           <div className="flex flex-wrap items-center bg-slate-100 dark:bg-slate-900/80 p-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold">
             {(
               [
@@ -228,30 +287,180 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
             ))}
           </div>
 
-          {/* Role-Specific Primary Action */}
-          {role !== 'VIEWER' ? (
+          {/* Primary Action Button Based on Role */}
+          {currentRole !== 'VIEWER' ? (
             <button
               onClick={() => setActiveTab('new-assessment')}
-              className="flex items-center gap-2 px-3.5 sm:px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-xl transition-all shadow-md shadow-brand-500/20 text-xs"
+              className="flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-xl transition-all shadow-md shadow-brand-500/20 text-xs"
             >
-              <span>Run New Assessment</span>
-              <ArrowRight className="w-4 h-4" />
+              <PlusCircle className="w-4 h-4" />
+              <span>New Assessment</span>
             </button>
           ) : (
-            <div className="flex items-center gap-1.5 text-xs text-slate-500 bg-slate-50 dark:bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
-              <Lock className="w-3.5 h-3.5 text-slate-400" />
-              <span>Read-Only Viewer</span>
-            </div>
+            <button
+              onClick={() => setActiveTab('simulator')}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl transition-all shadow-xs text-xs dark:bg-slate-700 dark:hover:bg-slate-600"
+            >
+              <SlidersHorizontal className="w-4 h-4 text-brand-400" />
+              <span>Risk Simulator (Sandbox)</span>
+            </button>
           )}
         </div>
       </div>
 
-      {/* 8 Primary Dashboard KPI Cards Grid */}
+      {/* 2. VIEWER-ONLY INFORMATIONAL BANNER */}
+      {currentRole === 'VIEWER' && (
+        <div className="bg-gradient-to-r from-blue-500/10 via-slate-500/10 to-brand-500/10 border border-blue-200/80 dark:border-blue-900/50 rounded-2xl p-4 sm:p-5 flex items-start gap-3.5 shadow-xs">
+          <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
+          <div className="text-xs sm:text-sm">
+            <h4 className="font-bold text-slate-900 dark:text-white">Read-Only Viewer Experience</h4>
+            <p className="text-slate-600 dark:text-slate-300 mt-0.5 leading-relaxed">
+              You are authenticated with read-only audit permissions. You can explore portfolio distributions, inspect model drift and demographic fairness, and test counterfactual scenarios in the <strong>Risk Simulator sandbox</strong> (which executes purely in memory without persisting data). To originate live credit assessments or manage accounts, contact an administrator.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* 3. ADMIN-ONLY TELEMETRY & MANAGEMENT SHORTCUTS */}
+      {currentRole === 'ADMIN' && adminOverview && (
+        <div className="space-y-4">
+          <div className="bg-gradient-to-r from-purple-500/10 via-indigo-500/10 to-brand-500/10 border border-purple-200 dark:border-purple-800/40 rounded-2xl p-4 sm:p-6 shadow-xs">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-4">
+              <div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                  <span>Platform Governance & Security Telemetry</span>
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  High-level identity controls, security counters, and platform health indicators.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => setActiveTab('users')}
+                  className="px-3.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 transition-all shadow-xs flex items-center gap-1.5"
+                >
+                  <Users className="w-3.5 h-3.5 text-purple-600" />
+                  <span>User Management</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('audit')}
+                  className="px-3.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 transition-all shadow-xs flex items-center gap-1.5"
+                >
+                  <FileText className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>System Audit Logs</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('admin-center')}
+                  className="px-3.5 py-1.5 bg-purple-600 text-white rounded-xl text-xs font-semibold hover:bg-purple-700 transition-all shadow-sm shadow-purple-600/20 flex items-center gap-1.5"
+                >
+                  <Shield className="w-3.5 h-3.5" />
+                  <span>Admin Control Center</span>
+                </button>
+              </div>
+            </div>
+
+            {/* 4 Admin Quick KPI Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <div className="bg-white/80 dark:bg-slate-800/80 p-3.5 rounded-xl border border-purple-100 dark:border-purple-900/50">
+                <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  Total Users
+                </span>
+                <p className="text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">
+                  {adminOverview.total_users}
+                </p>
+                <span className="text-[10px] text-emerald-600 font-semibold">
+                  {adminOverview.active_users} active accounts
+                </span>
+              </div>
+
+              <div className="bg-white/80 dark:bg-slate-800/80 p-3.5 rounded-xl border border-purple-100 dark:border-purple-900/50">
+                <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  Role Distribution
+                </span>
+                <p className="text-xs font-bold text-slate-800 dark:text-slate-200 mt-1.5 space-x-2">
+                  <span className="text-purple-600">{adminOverview.admin_users ?? adminOverview.users_by_role?.ADMIN ?? 0} Admins</span> •{' '}
+                  <span className="text-blue-600">{adminOverview.officer_users ?? adminOverview.users_by_role?.CREDIT_OFFICER ?? 0} Officers</span> •{' '}
+                  <span className="text-slate-500">{adminOverview.viewer_users ?? adminOverview.users_by_role?.VIEWER ?? 0} Viewers</span>
+                </p>
+                <span className="text-[10px] text-slate-400">Strict RBAC enforced</span>
+              </div>
+
+              <div className="bg-white/80 dark:bg-slate-800/80 p-3.5 rounded-xl border border-purple-100 dark:border-purple-900/50">
+                <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  Security Logins
+                </span>
+                <p className="text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">
+                  {adminOverview.successful_logins ?? adminOverview.login_success_count ?? 0}
+                </p>
+                <span className="text-[10px] text-rose-500 font-semibold">
+                  {adminOverview.failed_logins ?? adminOverview.login_failure_count ?? 0} failed attempts
+                </span>
+              </div>
+
+              <div className="bg-white/80 dark:bg-slate-800/80 p-3.5 rounded-xl border border-purple-100 dark:border-purple-900/50">
+                <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  System Health
+                </span>
+                <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-1.5 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>All Subsystems Ready</span>
+                </p>
+                <span className="text-[10px] text-slate-400">Model 1.0.0 • Cutoff 0.35</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 4. CREDIT OFFICER UNDERWRITING SHORTCUTS */}
+      {currentRole === 'CREDIT_OFFICER' && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+          <button
+            onClick={() => setActiveTab('new-assessment')}
+            className="p-4 bg-brand-500 hover:bg-brand-600 text-white rounded-2xl shadow-sm shadow-brand-500/20 text-left transition-all flex items-center justify-between group"
+          >
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-brand-100">Primary Workflow</span>
+              <h4 className="text-base font-extrabold mt-0.5">New Loan Assessment</h4>
+              <p className="text-xs text-brand-100/90 mt-1">Score applicant across 20 German credit dimensions.</p>
+            </div>
+            <ArrowRight className="w-5 h-5 shrink-0 group-hover:translate-x-1 transition-transform" />
+          </button>
+
+          <button
+            onClick={() => setActiveTab('simulator')}
+            className="p-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/60 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs text-left transition-all flex items-center justify-between group"
+          >
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Decision Support</span>
+              <h4 className="text-base font-extrabold text-slate-900 dark:text-white mt-0.5">Risk Simulator</h4>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Test counterfactual loan terms & restructuring.</p>
+            </div>
+            <ArrowRight className="w-5 h-5 text-slate-400 group-hover:translate-x-1 transition-transform" />
+          </button>
+
+          <button
+            onClick={() => setActiveTab('history')}
+            className="p-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/60 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xs text-left transition-all flex items-center justify-between group"
+          >
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Audit & Dossiers</span>
+              <h4 className="text-base font-extrabold text-slate-900 dark:text-white mt-0.5">Assessment History</h4>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Inspect scored applicants & download vector PDFs.</p>
+            </div>
+            <ArrowRight className="w-5 h-5 text-slate-400 group-hover:translate-x-1 transition-transform" />
+          </button>
+        </div>
+      )}
+
+      {/* 5. PRIMARY CREDIT RISK KPI CARDS GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5">
-        {/* 1. Total Assessments */}
+        {/* Total Assessments */}
         <div className="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider">Total Assessments</span>
+          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+            <span className="text-xs font-bold uppercase tracking-wider">Total Scored Loans</span>
             <div className="p-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg">
               <FileText className="w-4 h-4" />
             </div>
@@ -261,13 +470,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
           </p>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1">
             <Calendar className="w-3.5 h-3.5 text-slate-400" />
-            <span>Scope: {timeFilter === 'all' ? 'Complete history' : `Last ${timeFilter} days`}</span>
+            <span>Scope: {timeFilter === 'all' ? 'All historical records' : `Past ${timeFilter} days`}</span>
           </p>
         </div>
 
-        {/* 2. Good Credit Predictions */}
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-3">
+        {/* Good Credit Predictions */}
+        <div className="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
             <span className="text-xs font-bold uppercase tracking-wider">Good Credit (Approved)</span>
             <div className="p-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-lg">
               <ShieldCheck className="w-4 h-4" />
@@ -281,9 +490,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
           </p>
         </div>
 
-        {/* 3. High Risk Predictions */}
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-3">
+        {/* High Risk Predictions */}
+        <div className="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
             <span className="text-xs font-bold uppercase tracking-wider">High Risk (Rejected)</span>
             <div className="p-2 bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 rounded-lg">
               <ShieldAlert className="w-4 h-4" />
@@ -293,230 +502,134 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
             {summary?.high_risk_count || 0}
           </p>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 font-medium">
-            Rejection Rate: <span className="font-semibold text-rose-600">{summary?.bad_credit_rate_pct || summary?.high_risk_rate_pct || '0.00%'}</span>
+            Rejection Rate: <span className="font-semibold text-rose-600">{summary?.bad_credit_rate_pct || '0.00%'}</span>
           </p>
         </div>
 
-        {/* 4. Manual Review Cases */}
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider">Manual Review Cases</span>
-            <div className="p-2 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-lg">
-              <AlertTriangle className="w-4 h-4" />
-            </div>
-          </div>
-          <p className="text-3xl font-extrabold text-amber-600 dark:text-amber-400">
-            {summary?.manual_review_count || 0}
-          </p>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-            Borderline risk corridor (0.20 – 0.35)
-          </p>
-        </div>
-
-        {/* 5. Average Default Probability */}
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider">Avg Default Probability</span>
+        {/* Model Calibration Status */}
+        <div className="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+            <span className="text-xs font-bold uppercase tracking-wider">Decision Cutoff</span>
             <div className="p-2 bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-lg">
-              <TrendingUp className="w-4 h-4" />
+              <Cpu className="w-4 h-4" />
             </div>
           </div>
-          <p className="text-3xl font-extrabold text-slate-900 dark:text-white">
-            {summary?.average_default_probability_pct || summary?.avg_default_probability_pct || '0.00%'}
-          </p>
+          <p className="text-3xl font-extrabold text-slate-900 dark:text-white">0.35</p>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-            Target Cutoff: <span className="font-semibold text-slate-700 dark:text-slate-300">35.0%</span>
-          </p>
-        </div>
-
-        {/* 6. Average Credit Amount */}
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider">Avg Loan Amount</span>
-            <div className="p-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-lg">
-              <DollarSign className="w-4 h-4" />
-            </div>
-          </div>
-          <p className="text-3xl font-extrabold text-slate-900 dark:text-white">
-            {(summary?.average_credit_amount || summary?.avg_credit_amount || 0).toLocaleString()} <span className="text-sm font-semibold text-slate-500">DM</span>
-          </p>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-            Average principal per assessment
-          </p>
-        </div>
-
-        {/* 7. Average Loan Duration */}
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider">Avg Loan Duration</span>
-            <div className="p-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg">
-              <Clock className="w-4 h-4" />
-            </div>
-          </div>
-          <p className="text-3xl font-extrabold text-slate-900 dark:text-white">
-            {summary?.average_loan_duration || 0} <span className="text-sm font-semibold text-slate-500">Months</span>
-          </p>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-            Repayment commitment horizon
-          </p>
-        </div>
-
-        {/* 8. Assessments Today */}
-        <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider">Assessments Today</span>
-            <div className="p-2 bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 rounded-lg">
-              <Activity className="w-4 h-4" />
-            </div>
-          </div>
-          <p className="text-3xl font-extrabold text-slate-900 dark:text-white">
-            {summary?.assessments_today || 0}
-          </p>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-            Originating underwriting volume
+            Cost-loss calibrated • 5:1 default penalty
           </p>
         </div>
       </div>
 
-      {/* Live System Health Panel */}
-      <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <div className="flex items-center gap-2">
-            <Activity className="w-5 h-5 text-brand-500 shrink-0" />
-            <h3 className="font-bold text-slate-900 dark:text-white text-base">Live System Health Architecture</h3>
-          </div>
-          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold w-fit ${
-            health?.status === 'healthy'
-              ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/40'
-              : 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800/40'
-          }`}>
-            {health?.status === 'healthy' ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-            {health?.status === 'healthy' ? 'ALL SYSTEMS OPERATIONAL' : 'SYSTEM DEGRADED'}
-          </span>
+      {/* Secondary Metric Bar */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+        <div>
+          <span className="text-[11px] font-bold text-slate-400 uppercase">Avg Default Probability</span>
+          <p className="text-lg font-bold text-slate-900 dark:text-white mt-0.5">
+            {summary?.average_default_probability_pct || '0.0%'}
+          </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
-          {/* API */}
-          <div className="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/60">
-            <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-1">
-              <Activity className="w-4 h-4 text-emerald-500" />
-              <span className="text-xs font-semibold">FastAPI Engine</span>
-            </div>
-            <p className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              Online (v1.0)
-            </p>
-          </div>
+        <div>
+          <span className="text-[11px] font-bold text-slate-400 uppercase">Avg Credit Requested</span>
+          <p className="text-lg font-bold text-slate-900 dark:text-white mt-0.5">
+            {summary?.average_credit_amount ? `${Math.round(summary.average_credit_amount).toLocaleString()} DM` : '0 DM'}
+          </p>
+        </div>
 
-          {/* Database */}
-          <div className="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/60">
-            <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-1">
-              <Database className="w-4 h-4 text-blue-500" />
-              <span className="text-xs font-semibold">PostgreSQL</span>
-            </div>
-            <p className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              Connected
-            </p>
-          </div>
+        <div>
+          <span className="text-[11px] font-bold text-slate-400 uppercase">Avg Loan Duration</span>
+          <p className="text-lg font-bold text-slate-900 dark:text-white mt-0.5">
+            {summary?.average_loan_duration ? `${summary.average_loan_duration.toFixed(1)} Months` : '0 Months'}
+          </p>
+        </div>
 
-          {/* ML Model */}
-          <div className="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/60">
-            <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-1">
-              <Cpu className="w-4 h-4 text-purple-500" />
-              <span className="text-xs font-semibold">ML Classifier</span>
-            </div>
-            <p className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              LogisticReg (C=0.1)
-            </p>
-          </div>
-
-          {/* Preprocessing */}
-          <div className="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/60">
-            <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-1">
-              <Layers className="w-4 h-4 text-cyan-500" />
-              <span className="text-xs font-semibold">Preprocessing</span>
-            </div>
-            <p className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              ColumnTransformer
-            </p>
-          </div>
-
-          {/* Threshold */}
-          <div className="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/60">
-            <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-1">
-              <Sliders className="w-4 h-4 text-amber-500" />
-              <span className="text-xs font-semibold">Cutoff Threshold</span>
-            </div>
-            <p className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              {health?.threshold !== undefined ? `${health.threshold} (Calibrated)` : '0.35'}
-            </p>
-          </div>
-
-          {/* Authentication */}
-          <div className="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/60">
-            <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-1">
-              <Lock className="w-4 h-4 text-rose-500" />
-              <span className="text-xs font-semibold">Security / RBAC</span>
-            </div>
-            <p className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              JWT + Bcrypt Active
-            </p>
-          </div>
+        <div>
+          <span className="text-[11px] font-bold text-slate-400 uppercase">Model Version</span>
+          <p className="text-lg font-bold text-brand-600 dark:text-brand-400 mt-0.5">
+            Tuned LR 1.0.0
+          </p>
         </div>
       </div>
 
-      {/* Visual Analytics Grid: Risk Stratification, Prediction & Trends */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        {/* 1. Risk Category Stratification */}
-        <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs min-w-0">
+      {/* 6. CHARTS & PORTFOLIO VISUALIZATIONS */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
+        {/* Risk Category Distribution */}
+        <div className="bg-white dark:bg-slate-800 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-slate-900 dark:text-white text-base">Risk Distribution</h3>
-            <span className="text-xs text-slate-500 font-medium">Categorical Stratification</span>
+            <div>
+              <h3 className="font-bold text-slate-900 dark:text-white text-base">Portfolio Risk Distribution</h3>
+              <p className="text-xs text-slate-400 mt-0.5">Classification split across Low, Moderate, and High Risk tiers</p>
+            </div>
+            <span className="text-xs px-2.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded-lg text-slate-500 font-semibold">
+              3 Tiers
+            </span>
           </div>
-          <div className="h-56 sm:h-64 min-w-0">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={riskPieData} cx="50%" cy="50%" innerRadius={55} outerRadius={80} paddingAngle={5} dataKey="value">
-                  {riskPieData.map((_, index) => (
-                    <Cell key={`risk-cell-${index}`} fill={RISK_COLORS[index % RISK_COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#1e293b',
-                    borderColor: '#334155',
-                    borderRadius: '0.75rem',
-                    color: '#f8fafc',
-                    fontSize: '12px'
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+          <div className="h-64 flex items-center justify-center">
+            {riskPieData.some((d) => d.value > 0) ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={riskPieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={90}
+                    paddingAngle={4}
+                    dataKey="value"
+                  >
+                    {riskPieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={RISK_COLORS[index % RISK_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#1e293b',
+                      borderColor: '#334155',
+                      borderRadius: '0.75rem',
+                      color: '#f8fafc',
+                      fontSize: '12px'
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-xs text-slate-400">No assessment data available for this timeframe.</p>
+            )}
           </div>
-          <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 text-xs font-medium text-slate-600 dark:text-slate-400 mt-2">
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-emerald-500"></span> Low Risk</span>
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-amber-500"></span> Moderate Risk</span>
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-rose-500"></span> High Risk</span>
+          <div className="flex justify-center gap-6 mt-2 text-xs">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+              <span className="text-slate-600 dark:text-slate-300">Low Risk</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+              <span className="text-slate-600 dark:text-slate-300">Moderate Risk</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-rose-500"></div>
+              <span className="text-slate-600 dark:text-slate-300">High Risk</span>
+            </div>
           </div>
         </div>
 
-        {/* 2. Prediction Distribution */}
-        <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs min-w-0">
+        {/* Prediction Class Split */}
+        <div className="bg-white dark:bg-slate-800 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-slate-900 dark:text-white text-base">Prediction Distribution</h3>
-            <span className="text-xs text-slate-500 font-medium">Binary Decision Breakdown</span>
+            <div>
+              <h3 className="font-bold text-slate-900 dark:text-white text-base">Binary Classification Ratio</h3>
+              <p className="text-xs text-slate-400 mt-0.5">Good Credit vs Bad Credit against 0.35 Cutoff</p>
+            </div>
+            <span className="text-xs px-2.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded-lg text-slate-500 font-semibold">
+              Binary Target
+            </span>
           </div>
-          <div className="h-56 sm:h-64 min-w-0">
+          <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={predData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.2} />
-                <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} />
-                <YAxis stroke="#94a3b8" fontSize={11} />
+                <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} />
+                <YAxis stroke="#94a3b8" fontSize={12} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: '#1e293b',
@@ -526,136 +639,33 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
                     fontSize: '12px'
                   }}
                 />
-                <Bar dataKey="count" radius={[6, 6, 0, 0]}>
-                  {predData.map((_, index) => (
-                    <Cell key={`pred-cell-${index}`} fill={PRED_COLORS[index % PRED_COLORS.length]} />
+                <Bar dataKey="count" fill="#3b82f6" radius={[6, 6, 0, 0]}>
+                  {predData.map((entry, index) => (
+                    <Cell key={`bar-${index}`} fill={PRED_COLORS[index % PRED_COLORS.length]} />
                   ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 text-xs font-medium text-slate-600 dark:text-slate-400 mt-2">
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-blue-500"></span> Good Credit (Approved)</span>
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-rose-500"></span> Bad Credit (Default Risk)</span>
+          <div className="flex justify-center gap-6 mt-2 text-xs">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+              <span className="text-slate-600 dark:text-slate-300">Good Credit</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-rose-500"></div>
+              <span className="text-slate-600 dark:text-slate-300">Bad Credit</span>
+            </div>
           </div>
         </div>
 
-        {/* 3. Assessment Trend */}
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+        {/* Checking Account vs Risk */}
+        <div className="bg-white dark:bg-slate-800 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-slate-900 dark:text-white text-base">Assessment Volume Trend</h3>
-            <span className="text-xs text-slate-500 font-medium">Daily Application Count</span>
-          </div>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={analytics?.assessment_trend || []}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.2} />
-                <XAxis dataKey="date" stroke="#94a3b8" fontSize={11} />
-                <YAxis stroke="#94a3b8" fontSize={11} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#1e293b',
-                    borderColor: '#334155',
-                    borderRadius: '0.75rem',
-                    color: '#f8fafc',
-                    fontSize: '12px'
-                  }}
-                />
-                <Area type="monotone" dataKey="count" stroke="#0284c7" fill="#0284c7" fillOpacity={0.2} strokeWidth={2} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* 4. Default Probability Trend */}
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-slate-900 dark:text-white text-base">Default Probability Trend</h3>
-            <span className="text-xs text-slate-500 font-medium">Average Daily Portfolio Risk %</span>
-          </div>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={analytics?.default_probability_trend || []}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.2} />
-                <XAxis dataKey="date" stroke="#94a3b8" fontSize={11} />
-                <YAxis stroke="#94a3b8" fontSize={11} domain={[0, 1]} tickFormatter={(v) => `${(v * 100).toFixed(0)}%`} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#1e293b',
-                    borderColor: '#334155',
-                    borderRadius: '0.75rem',
-                    color: '#f8fafc',
-                    fontSize: '12px'
-                  }}
-                  formatter={(value: any) => [`${(Number(value) * 100).toFixed(2)}%`, 'Avg Probability']}
-                />
-                <Line type="monotone" dataKey="avg_prob" stroke="#a855f7" strokeWidth={2.5} dot={{ r: 3 }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* 5. Credit Amount vs Risk */}
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-slate-900 dark:text-white text-base">Credit Amount vs Risk</h3>
-            <span className="text-xs text-slate-500 font-medium">Default Probability by Principal Tier</span>
-          </div>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={analytics?.credit_amount_vs_risk || analytics?.amount_vs_risk || []}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.2} />
-                <XAxis dataKey="group" stroke="#94a3b8" fontSize={11} />
-                <YAxis stroke="#94a3b8" fontSize={11} tickFormatter={(v) => `${(v * 100).toFixed(0)}%`} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#1e293b',
-                    borderColor: '#334155',
-                    borderRadius: '0.75rem',
-                    color: '#f8fafc',
-                    fontSize: '12px'
-                  }}
-                  formatter={(value: any) => [`${(Number(value) * 100).toFixed(1)}%`, 'Default Prob']}
-                />
-                <Bar dataKey="avg_prob" fill="#3b82f6" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* 6. Loan Duration vs Risk */}
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-slate-900 dark:text-white text-base">Loan Duration vs Risk</h3>
-            <span className="text-xs text-slate-500 font-medium">Default Probability by Term Horizon</span>
-          </div>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={analytics?.duration_vs_risk || []}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.2} />
-                <XAxis dataKey="group" stroke="#94a3b8" fontSize={11} />
-                <YAxis stroke="#94a3b8" fontSize={11} tickFormatter={(v) => `${(v * 100).toFixed(0)}%`} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#1e293b',
-                    borderColor: '#334155',
-                    borderRadius: '0.75rem',
-                    color: '#f8fafc',
-                    fontSize: '12px'
-                  }}
-                  formatter={(value: any) => [`${(Number(value) * 100).toFixed(1)}%`, 'Default Prob']}
-                />
-                <Bar dataKey="avg_prob" fill="#f59e0b" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* 7. Checking Account vs Risk */}
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-slate-900 dark:text-white text-base">Checking Account vs Risk</h3>
-            <span className="text-xs text-slate-500 font-medium">Impact of Account Liquidity</span>
+            <div>
+              <h3 className="font-bold text-slate-900 dark:text-white text-base">Checking Account vs Risk</h3>
+              <p className="text-xs text-slate-400 mt-0.5">Average Default Probability by Liquidity Status</p>
+            </div>
           </div>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -673,17 +683,19 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
                   }}
                   formatter={(value: any) => [`${value}%`, 'Default Risk']}
                 />
-                <Bar dataKey="avg_prob_pct" fill="#06b6d4" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="avg_prob_pct" fill="#6366f1" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* 8. Savings Account vs Risk */}
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+        {/* Savings Account vs Risk */}
+        <div className="bg-white dark:bg-slate-800 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-slate-900 dark:text-white text-base">Savings Account vs Risk</h3>
-            <span className="text-xs text-slate-500 font-medium">Impact of Reserve Balances</span>
+            <div>
+              <h3 className="font-bold text-slate-900 dark:text-white text-base">Savings Account vs Risk</h3>
+              <p className="text-xs text-slate-400 mt-0.5">Average Default Probability by Savings Tier</p>
+            </div>
           </div>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -706,53 +718,36 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
             </ResponsiveContainer>
           </div>
         </div>
-
-        {/* 9. Credit History vs Risk */}
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs lg:col-span-2">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-slate-900 dark:text-white text-base">Credit History vs Risk</h3>
-            <span className="text-xs text-slate-500 font-medium">Repayment Track Record vs Default Probability</span>
-          </div>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={formattedHistoryData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.2} />
-                <XAxis dataKey="group" stroke="#94a3b8" fontSize={11} />
-                <YAxis stroke="#94a3b8" fontSize={11} tickFormatter={(v) => `${v}%`} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#1e293b',
-                    borderColor: '#334155',
-                    borderRadius: '0.75rem',
-                    color: '#f8fafc',
-                    fontSize: '12px'
-                  }}
-                  formatter={(value: any) => [`${value}%`, 'Default Risk']}
-                />
-                <Bar dataKey="avg_prob_pct" fill="#8b5cf6" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
       </div>
 
-      {/* Recent Assessment Table */}
+      {/* 7. RECENT CREDIT ASSESSMENTS TABLE */}
       <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs overflow-hidden">
         <div className="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h3 className="font-bold text-slate-900 dark:text-white text-base">Recent Credit Assessments</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Live database applicant assessments scored by the ML pipeline</p>
+            <h3 className="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+              <span>Recent Credit Assessments</span>
+              {currentRole === 'VIEWER' && (
+                <span className="text-xs px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-500 rounded-md">
+                  Read-Only
+                </span>
+              )}
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Live loan decisions scored by the calibrated Logistic Regression engine
+            </p>
           </div>
+
           <button
             onClick={() => setActiveTab('history')}
             className="text-xs font-semibold text-brand-500 hover:text-brand-600 dark:text-brand-400 dark:hover:text-brand-300 flex items-center gap-1 w-fit"
           >
-            <span>View All History</span>
+            <span>{currentRole === 'VIEWER' ? 'View Full History (Read-Only)' : 'View All History'}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
+
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[640px]">
+          <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
               <tr className="bg-slate-50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-100 dark:border-slate-700">
                 <th className="py-3.5 px-6">Assessment ID</th>
@@ -762,6 +757,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
                 <th className="py-3.5 px-6">Default Prob</th>
                 <th className="py-3.5 px-6">Risk Category</th>
                 <th className="py-3.5 px-6">Decision</th>
+                <th className="py-3.5 px-6 text-right">PDF Dossier</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-700 text-sm">
@@ -772,27 +768,50 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
                       {item.id.substring(0, 8)}...
                     </td>
                     <td className="py-4 px-6 text-slate-600 dark:text-slate-400 text-xs">{item.created_at}</td>
-                    <td className="py-4 px-6 font-semibold text-slate-900 dark:text-white">{item.credit_amount.toLocaleString()} DM</td>
+                    <td className="py-4 px-6 font-semibold text-slate-900 dark:text-white">
+                      {item.credit_amount.toLocaleString()} DM
+                    </td>
                     <td className="py-4 px-6 text-slate-600 dark:text-slate-400">{item.duration_in_months}m</td>
-                    <td className="py-4 px-6 font-semibold text-slate-800 dark:text-slate-200">{item.default_probability_pct}</td>
+                    <td className="py-4 px-6 font-semibold text-slate-800 dark:text-slate-200">
+                      {item.default_probability_pct}
+                    </td>
                     <td className="py-4 px-6">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
-                        item.risk_category === 'LOW RISK'
-                          ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
-                          : item.risk_category === 'MODERATE RISK'
-                          ? 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
-                          : 'bg-rose-50 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'
-                      }`}>
+                      <span
+                        className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+                          item.risk_category === 'LOW RISK'
+                            ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+                            : item.risk_category === 'MODERATE RISK'
+                            ? 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                            : 'bg-rose-50 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'
+                        }`}
+                      >
                         {item.risk_category}
                       </span>
                     </td>
-                    <td className="py-4 px-6 font-semibold text-xs text-slate-700 dark:text-slate-300">{item.credit_decision}</td>
+                    <td className="py-4 px-6 font-semibold text-xs text-slate-700 dark:text-slate-300">
+                      {item.credit_decision}
+                    </td>
+                    <td className="py-4 px-6 text-right">
+                      <button
+                        onClick={(e) => handleDownloadReport(item.id, e)}
+                        disabled={downloadingId === item.id}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-lg transition-colors"
+                        title="Download Regulatory Audit PDF"
+                      >
+                        {downloadingId === item.id ? (
+                          <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <FileDown className="w-3.5 h-3.5 text-brand-500" />
+                        )}
+                        <span>PDF</span>
+                      </button>
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-slate-400 text-sm">
-                    No assessments recorded in this period. Run a new assessment to populate real portfolio records.
+                  <td colSpan={8} className="py-8 text-center text-slate-400 text-sm">
+                    No assessments recorded in this period.
                   </td>
                 </tr>
               )}
@@ -801,34 +820,44 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
         </div>
       </div>
 
-      {/* Admin Governance Quick Links */}
-      {role === 'ADMIN' && (
-        <div className="bg-gradient-to-r from-purple-500/10 via-indigo-500/10 to-brand-500/10 border border-purple-200 dark:border-purple-800/40 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div>
-            <h4 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Users className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-              Administrative Governance Shortcuts
-            </h4>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Manage system operators, review audit events, and configure security roles.
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setActiveTab('users')}
-              className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 transition-colors shadow-xs"
-            >
-              User Management
-            </button>
-            <button
-              onClick={() => setActiveTab('audit')}
-              className="px-4 py-2 bg-purple-600 text-white rounded-xl text-xs font-semibold hover:bg-purple-700 transition-colors shadow-md shadow-purple-600/20"
-            >
-              Audit Log Feed
-            </button>
-          </div>
-        </div>
-      )}
+      {/* 8. FOOTER NAVIGATION TILES */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+        <button
+          onClick={() => setActiveTab('analytics')}
+          className="p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-left hover:border-brand-500/50 transition-colors"
+        >
+          <BarChart3 className="w-4 h-4 text-brand-500 mb-1" />
+          <h5 className="text-xs font-bold text-slate-800 dark:text-slate-200">Executive Analytics</h5>
+          <p className="text-[10px] text-slate-400">Concentration heatmaps & trends</p>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('monitoring')}
+          className="p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-left hover:border-brand-500/50 transition-colors"
+        >
+          <Activity className="w-4 h-4 text-emerald-500 mb-1" />
+          <h5 className="text-xs font-bold text-slate-800 dark:text-slate-200">Model Monitoring</h5>
+          <p className="text-[10px] text-slate-400">PSI feature drift tracking</p>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('governance')}
+          className="p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-left hover:border-brand-500/50 transition-colors"
+        >
+          <Scale className="w-4 h-4 text-purple-500 mb-1" />
+          <h5 className="text-xs font-bold text-slate-800 dark:text-slate-200">Fairness & Parity</h5>
+          <p className="text-[10px] text-slate-400">Demographic auditing guardrails</p>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('model-info')}
+          className="p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-left hover:border-brand-500/50 transition-colors"
+        >
+          <Cpu className="w-4 h-4 text-blue-500 mb-1" />
+          <h5 className="text-xs font-bold text-slate-800 dark:text-slate-200">Model Architecture</h5>
+          <p className="text-[10px] text-slate-400">Calibrated hyperparameters</p>
+        </button>
+      </div>
     </div>
   );
 };
